@@ -29,11 +29,13 @@ Not implemented. Scaffolding:
 
 ## Deployment
 
-**Cloudflare Pages** (frontend): the app depends on `shared`, so build from the repo root:
-- Build command: `npm ci && npm run build -w shared && npm run build -w frontend`
-- Output directory: `frontend/dist`
-- Env: `VITE_API_URL` = Render service URL
-- Pages serves `index.html` for unknown paths when there is no `404.html`, so client-side routes work.
+**Vercel** (frontend): the app depends on `shared`, so it builds from the repo root. `vercel.json` holds the settings:
+- Build: `npm run build -w shared && npm run build -w frontend`; output `frontend/dist`
+- Project settings: Root Directory = repo root, Application Preset = Other
+- Env: `VITE_API_URL` = Render service URL (no trailing slash)
+- `vercel.json` rewrites all paths to `index.html` so client-side routes survive a refresh.
+- Vercel preview deployments get their own URLs, which `CORS_ORIGINS` does not allow; only the production URL works against the API unless added.
+- Cloudflare can still manage the domain/DNS.
 
 **Render Web Service** (backend): see `render.yaml`.
 - Build: `npm ci --include=dev && npm run build -w shared && npm run build -w backend`

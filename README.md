@@ -4,7 +4,7 @@ Internal system for nominating, assigning, evaluating and scoring award nominati
 
 | Concern | Choice |
 | --- | --- |
-| Frontend | React + TypeScript + Vite, Tailwind CSS v4, shadcn/ui-style components — Cloudflare Pages |
+| Frontend | React + TypeScript + Vite, Tailwind CSS v4, shadcn/ui-style components — Vercel |
 | Backend | Express 5 + TypeScript — Render Web Service |
 | Database | Neon PostgreSQL (plain SQL migrations) |
 | Auth | Clerk (scaffolded only — not wired up yet) |
@@ -13,7 +13,7 @@ Internal system for nominating, assigning, evaluating and scoring award nominati
 ## Structure
 
 ```
-frontend/   React app (Cloudflare Pages)
+frontend/   React app (Vercel)
 backend/    HTTP API (Render) — routes → controllers → services → db
   db/migrations/   SQL schema
 shared/     Types/constants used by both (roles, statuses, API shapes)
