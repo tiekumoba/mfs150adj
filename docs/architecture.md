@@ -36,7 +36,7 @@ Not implemented. Scaffolding:
 - Pages serves `index.html` for unknown paths when there is no `404.html`, so client-side routes work.
 
 **Render Web Service** (backend): see `render.yaml`.
-- Build: `npm ci && npm run build -w shared && npm run build -w backend`
+- Build: `npm ci --include=dev && npm run build -w shared && npm run build -w backend`
 - Start: `npm run start -w backend`
 - Health check path: `/health`
 - Env: `NODE_ENV=production`, `DATABASE_URL`, `CORS_ORIGINS` (the Pages URL)
