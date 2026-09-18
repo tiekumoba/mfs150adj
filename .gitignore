@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+.vite/
+.wrangler/
+
+# Environment and secrets (only *.example files are committed)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test / coverage
+coverage/
+
+# Local development / editor / OS files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+.claude/
