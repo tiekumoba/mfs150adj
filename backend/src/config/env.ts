@@ -24,7 +24,10 @@ const envSchema = z
     }
   });
 
-const parsed = envSchema.safeParse(process.env);
+// Empty values (e.g. `CLERK_SECRET_KEY=` copied from .env.example) count as unset.
+const rawEnv = Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== ""));
+
+const parsed = envSchema.safeParse(rawEnv);
 
 if (!parsed.success) {
   console.error("Invalid environment configuration:");
