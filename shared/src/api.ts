@@ -35,6 +35,33 @@ export interface NominationListItem {
 export interface NominationDetail extends Omit<NominationListItem, "documentCount"> {
   citation: string | null;
   documents: NominationDocumentDto[];
+  /** Number of submitted or draft evaluations. Editing after scoring has started affects them. */
+  evaluationCount: number;
+}
+
+export interface NominationUpdate {
+  nomineeName?: string;
+  nominatorName?: string | null;
+  citation?: string | null;
+  categoryId?: string;
+}
+
+export interface AuditChange {
+  field: string;
+  from: string | null;
+  to: string | null;
+}
+
+export interface AuditEntryDto {
+  id: string;
+  action: string;
+  actorName: string | null;
+  actorEmail: string | null;
+  source: "web" | "import" | "script";
+  ipAddress: string | null;
+  createdAt: string;
+  reason: string | null;
+  changes: AuditChange[];
 }
 
 export interface Paginated<T> {

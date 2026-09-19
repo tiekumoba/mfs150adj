@@ -44,9 +44,17 @@ All under `/api`, all require a signed-in invited user (see Authentication).
 | `GET /api/admin/stats` | ADMIN | dashboard counts |
 | `GET /api/nominations` | ADMIN | `?categoryId=&q=&page=&pageSize=` (max 100) |
 | `GET /api/nominations/:id` | ADMIN | includes supporting-evidence links |
+| `PATCH /api/nominations/:id` | ADMIN | edit name, nominator, justification, category; only real changes are saved |
+| `POST /api/nominations/:id/documents` | ADMIN | add an evidence link (http/https only) |
+| `DELETE /api/nominations/:id/documents/:documentId` | ADMIN | remove an evidence link |
+| `GET /api/nominations/:id/history` | ADMIN | audit entries for the nomination, newest first |
 | `GET /api/adjudicators` | ADMIN | status: invited (never signed in) / active / deactivated |
 | `POST /api/adjudicators` | ADMIN | `{email, fullName}`; always creates the ADJUDICATOR role; 409 if email exists |
 | `PATCH /api/adjudicators/:id` | ADMIN | `{isActive}`; deactivating blocks sign-in |
+
+## Audit trail
+
+Every admin change writes an `audit_logs` row in the same transaction as the change: **who** (`actor_user_id`, `actor_email` snapshot), **where from** (`source` = web/import/script, `ip_address`, `user_agent`), **what** (`action`, `entity_type`/`entity_id`, `changes` = list of field / old value / new value), **why** (`reason`) and **when** (`created_at`). Every audited request (edit nomination, add/remove evidence, add/activate/deactivate adjudicator) must include a `reason` of 3 to 500 characters, or the API returns 400. Saving with no real change writes nothing. The table is append-only: a database trigger rejects any UPDATE or DELETE. The nomination page shows its history.
 
 Adjudicator changes are recorded in `audit_logs`. Adding an adjudicator only creates their `users` row; an admin must also invite the same email in the Clerk dashboard so they can set a password.
 

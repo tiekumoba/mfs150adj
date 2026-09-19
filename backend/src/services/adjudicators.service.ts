@@ -1,7 +1,7 @@
 import type { AdjudicatorDto } from "@awards/shared";
 import { getPool } from "../db/pool.js";
 import { AppError } from "../middleware/errors.js";
-import { recordAudit } from "./audit.service.js";
+import { recordAudit, type AuditContext } from "./audit.service.js";
 
 interface Row {
   id: string;
@@ -37,7 +37,8 @@ export async function listAdjudicators(): Promise<AdjudicatorDto[]> {
 
 export async function createAdjudicator(
   input: { email: string; fullName: string },
-  actorUserId: string,
+  reason: string,
+  ctx: AuditContext,
 ): Promise<AdjudicatorDto> {
   const client = await getPool().connect();
   try {
@@ -49,12 +50,13 @@ export async function createAdjudicator(
       [input.email, input.fullName],
     );
     const id = rows[0]!.id;
-    await recordAudit(client, {
-      actorUserId,
+    await recordAudit(client, ctx, {
       action: "adjudicator.created",
       entityType: "user",
       entityId: id,
+      reason,
       metadata: { email: input.email.toLowerCase() },
+      changes: [{ field: "email", from: null, to: input.email.toLowerCase() }],
     });
     await client.query("COMMIT");
     const created = await getPool().query<Row>(`${SELECT} AND u.id = $1`, [id]);
@@ -73,7 +75,8 @@ export async function createAdjudicator(
 export async function setAdjudicatorActive(
   id: string,
   isActive: boolean,
-  actorUserId: string,
+  reason: string,
+  ctx: AuditContext,
 ): Promise<AdjudicatorDto> {
   const client = await getPool().connect();
   try {
@@ -85,11 +88,12 @@ export async function setAdjudicatorActive(
       [id, isActive],
     );
     if (!rowCount) throw new AppError(404, "NOT_FOUND", "Adjudicator not found");
-    await recordAudit(client, {
-      actorUserId,
+    await recordAudit(client, ctx, {
       action: isActive ? "adjudicator.reactivated" : "adjudicator.deactivated",
       entityType: "user",
       entityId: id,
+      reason,
+      changes: [{ field: "isActive", from: String(!isActive), to: String(isActive) }],
     });
     await client.query("COMMIT");
   } catch (err) {
