@@ -1,34 +1,22 @@
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-build/
-*.tsbuildinfo
-.vite/
-.wrangler/
-
-# Environment and secrets (only *.example files are committed)
+# Environment
 .env
 .env.*
 !.env.example
-*.pem
-*.key
 
-# Logs
-*.log
-npm-debug.log*
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Test / coverage
-coverage/
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
 
-# Local development / editor / OS files
+# OS / editor
 .DS_Store
 .idea/
-.vscode/*
-!.vscode/extensions.json
-*.swp
-.claude/
-
-# Personal data used for one-off imports. Never commit.
-backend/data/
+.vscode/
