@@ -7,6 +7,8 @@ import { validate } from "../middleware/validate.js";
 /** All routes mounted under /api. */
 export const apiRouter = Router();
 
-// NOTE: unauthenticated for now. Add `requireAuth, requireRole("ADMIN")` when Clerk is wired up.
+// Everything under /api requires a signed-in, invited user. Use requireRole(...) per route as needed.
+apiRouter.use(requireAuth);
+
+apiRouter.get("/me", me);
 apiRouter.get("/categories", validate({ query: listCategoriesQuery }), listCategories);
-apiRouter.get("/me", requireAuth, me);

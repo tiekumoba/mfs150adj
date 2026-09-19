@@ -1,14 +1,10 @@
-import type { Role } from "@awards/shared";
+import type { AppUser } from "../services/users.service.js";
 
 declare global {
   namespace Express {
     interface Request {
-      /** Populated by `requireAuth` once Clerk is integrated. */
-      auth?: {
-        userId: string;
-        clerkUserId: string;
-        role: Role;
-      };
+      /** Populated by `requireAuth`. */
+      auth?: AppUser;
     }
   }
 }

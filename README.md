@@ -7,7 +7,7 @@ Internal system for nominating, assigning, evaluating and scoring award nominati
 | Frontend | React + TypeScript + Vite, Tailwind CSS v4, shadcn/ui-style components — Vercel |
 | Backend | Express 5 + TypeScript — Render Web Service |
 | Database | Neon PostgreSQL (plain SQL migrations) |
-| Auth | Clerk (scaffolded only — not wired up yet) |
+| Auth | Clerk sign-in; roles and access come from our `users` table |
 | Later | WordPress file storage, Brevo email, Render Cron Jobs, Turnstile |
 
 ## Structure
@@ -39,11 +39,14 @@ npm run dev:frontend
 
 # Database (needs DATABASE_URL in backend/.env)
 npm run db:migrate
+
+# Create the first admin (must match the email used to sign in with Clerk)
+npm run db:seed-admin -- you@example.org "Your Name"
 ```
 
 Check the API: `curl localhost:4000/health`
 
-Routes: `/`, `/login`, `/admin`, `/adjudicator`, `/adjudicator/evaluations/a-1001`
+Routes: `/`, `/login`, `/admin`, `/adjudicator`, `/adjudicator/evaluations/a-1001` (all except `/` and `/login` need sign-in)
 
 If you edit `shared/src`, run `npm run build -w shared` (the `typecheck`/`build` scripts do this for you).
 
@@ -63,13 +66,13 @@ Backend (`backend/.env`):
 | `PORT` | no | default `4000` (Render sets this) |
 | `CORS_ORIGINS` | no | comma-separated allowed origins; default `http://localhost:5173` |
 | `DATABASE_URL` | production | Neon connection string (`?sslmode=require`) |
-| `CLERK_SECRET_KEY` | later | unused for now |
+| `CLERK_SECRET_KEY` | yes | Clerk secret key; without it every `/api` route returns 501 |
 
 Frontend (`frontend/.env.local`, `VITE_` values are public — never put secrets here):
 
 | Variable | Notes |
 | --- | --- |
 | `VITE_API_URL` | backend base URL, default `http://localhost:4000` |
-| `VITE_CLERK_PUBLISHABLE_KEY` | later |
+| `VITE_CLERK_PUBLISHABLE_KEY` | required |
 
 See [docs/architecture.md](docs/architecture.md) for schema, auth plan and deployment settings.

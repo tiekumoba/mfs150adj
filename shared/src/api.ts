@@ -19,3 +19,12 @@ export interface ApiErrorBody {
     details?: unknown;
   };
 }
+
+export interface MeResponse {
+  data: {
+    id: string;
+    email: string;
+    fullName: string;
+    role: import("./roles.js").Role;
+  };
+}

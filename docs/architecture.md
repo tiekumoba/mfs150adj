@@ -21,11 +21,17 @@ roles ─< users          audit_logs (actor_user_id → users)
 
 Schema lives in `backend/db/migrations/*.sql`; `npm run db:migrate` applies new files in order and records them in `schema_migrations`.
 
-## Authentication plan (Clerk)
+## Authentication (Clerk)
 
-Not implemented. Scaffolding:
-- Backend: `middleware/auth.ts` has `requireAuth` (currently fails closed with 501) and `requireRole(...)`; `req.auth` is typed in `types/express.d.ts`.
-- Frontend: `lib/auth.tsx` has `RequireRole` / `useCurrentRole` stubs. Frontend guards are UX only; the API must enforce roles.
+Clerk proves *who* someone is; our `users` table decides *whether* they get in and *which role* they have.
+
+1. An admin adds a person to `users` (email + role). First admin: `npm run db:seed-admin -- email "Name"`.
+2. That person signs in through Clerk (turn public sign-ups off in the Clerk dashboard).
+3. The frontend sends the Clerk session token as `Authorization: Bearer ...`. `requireAuth` (`backend/src/middleware/auth.ts`) verifies it, then finds the user by `clerk_user_id`. On first sign-in it links the Clerk account to the invited row by **verified** primary email.
+4. No matching active row → 403 `NOT_INVITED`. `requireRole(...)` enforces roles per route.
+5. Every `/api` route requires sign-in. The frontend guards (`lib/auth.tsx`) are UX only.
+
+The token's authorized party must be one of `CORS_ORIGINS`, so the deployed frontend origin must be listed there.
 
 ## Deployment
 

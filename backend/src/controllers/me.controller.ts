@@ -1,6 +1,9 @@
 import type { RequestHandler } from "express";
+import type { MeResponse } from "@awards/shared";
 
-/** Returns the authenticated user. Placeholder until Clerk is integrated (see middleware/auth.ts). */
+/** Returns the signed-in user and role (set by `requireAuth`). */
 export const me: RequestHandler = (req, res) => {
-  res.json({ data: req.auth });
+  const { id, email, fullName, role } = req.auth!;
+  const body: MeResponse = { data: { id, email, fullName, role } };
+  res.json(body);
 };
