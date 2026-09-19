@@ -1,0 +1,657 @@
+{
+  "award": {
+    "name": "MOBA@150 Awards",
+    "status": "draft"
+  },
+  "categories": [
+    {
+      "name": "Distinguished Alumnus – Academia and Research",
+      "short_name": "DA Academia and Research",
+      "group_name": "Distinguished Alumnus",
+      "sort_order": 1,
+      "purpose": "The Distinguished Alumnus Award in Academia and Research targets any Mfantsipim Old Boy who has made a significant contribution to society in academia and research. Their careers and accomplishments should have brought credit and honour to Mfantsipim. Posthumous recognition is permitted.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee’s character and achievements. The proposer must provide a profile or curriculum vitae of the nominee, including reasons for the nomination.",
+      "eligibility_criteria": [
+        "be distinguished in their chosen profession",
+        "have received previous recognition from contemporaries",
+        "have made a notable impact in their industry or field or community of endeavour (including national and international contributions) through service, voluntarism or leadership.",
+        "have a sustained record of achievement over their career",
+        "Must have been an alumnus for more than 15 years",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Professional achievements, including academic and professional qualifications, scholarly publications in peer-reviewed journals, research grants, student supervision and leadership roles",
+          "weight": "0.35",
+          "weight_rationale": "This carries the highest weighting because professional and academic achievements are the primary evidence base for this award.",
+          "max_score": 5
+        },
+        {
+          "description": "Extension and Community service, including mentorship and influence on national and international policy",
+          "weight": "0.2",
+          "weight_rationale": "The criterion links academic/research achievement to wider public and policy benefit.",
+          "max_score": 5
+        },
+        {
+          "description": "Service to Mfantsipim School",
+          "weight": "0.15",
+          "weight_rationale": "Recognises direct contribution to the school community.",
+          "max_score": 5
+        },
+        {
+          "description": "Character and integrity",
+          "weight": "0.1",
+          "weight_rationale": "Maintains credibility of the award and nominee profile.",
+          "max_score": 5
+        },
+        {
+          "description": "Overall impact on their field, nation or the world",
+          "weight": "0.2",
+          "weight_rationale": "Recognises wider impact beyond individual professional achievement.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Distinguished Alumnus – Arts and Cultural Excellence",
+      "short_name": "DA Arts and Culture",
+      "group_name": "Distinguished Alumnus",
+      "sort_order": 2,
+      "purpose": "The Arts & Cultural Excellence Award recognises a MOBA member who has significantly advanced and impacted the arts, culture, or creative industries locally or internationally. Their work should embody creativity, innovation, and cultural preservation.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with their artistic/cultural contributions and character. The proposer must provide a profile or CV of the nominee, including reasons for the nomination and a portfolio of works where applicable.",
+      "eligibility_criteria": [
+        "Must have made a distinguished impact in arts and culture (Visual Arts & Cultural Artefacts; Performing Arts & Cultural Expressions; Literacy & Narrative Arts).",
+        "Must have received recognition from peers or institutions.",
+        "Must have advanced modern and cultural appreciation, preservation, or innovation nationally or internationally.",
+        "Sustained record of artistic or cultural excellence.",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association.",
+        "No nominee for this award may be a member of the selection committee for this award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Creative accomplishments and originality.",
+          "weight": "0.25",
+          "weight_rationale": "Core creative output is central to the award objective.",
+          "max_score": 5
+        },
+        {
+          "description": "Recognition, awards, or exhibitions/performances.",
+          "weight": "0.25",
+          "weight_rationale": "External recognition provides objective support for artistic/cultural standing.",
+          "max_score": 5
+        },
+        {
+          "description": "Cultural impact and preservation. (Reflective and Historical, Aesthetic and Expressive,Communal and Popular.)",
+          "weight": "0.25",
+          "weight_rationale": "Directly reflects cultural preservation and impact, which are central to the award.",
+          "max_score": 5
+        },
+        {
+          "description": "Service to Mfantsipim and mentorship of young talents.",
+          "weight": "0.15",
+          "weight_rationale": "Connects achievement back to Mfantsipim and talent development.",
+          "max_score": 5
+        },
+        {
+          "description": "Character and integrity.",
+          "weight": "0.1",
+          "weight_rationale": "Supports credibility and alignment with MOBA/Mfantsipim values.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Distinguished Alumnus – Business and Entrepreneurship",
+      "short_name": "DA Business and Entrepreneurship",
+      "group_name": "Distinguished Alumnus",
+      "sort_order": 3,
+      "purpose": "The Distinguished Alumnus Award in Business and Entrepreneurship targets any Mfantsipim Old Boys Association member who has made a significant contribution to society in business development and entrepreneurship. Their careers and accomplishments should have brought credit and honour to Mfantsipim. Posthumous recognition is permitted.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee’s character and achievements. The proposer must provide a profile or curriculum vitae of the nominee, including reasons for the nomination.",
+      "eligibility_criteria": [
+        "be distinguished in their chosen profession",
+        "have received previous recognition from contemporaries",
+        "have made a notable impact in their community, industry or field of endeavour (including national and international contributions) through service, voluntarism or leadership.",
+        "have a sustained record of achievement over their career",
+        "Must have been an alumnus for more than 15 years",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association"
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Professional achievements, including established businesses, leadership and prior recognition in respective fields of endeavour",
+          "weight": "0.35",
+          "weight_rationale": "Primary weighting reflects the business and entrepreneurship focus of the award.",
+          "max_score": 5
+        },
+        {
+          "description": "Community service, including mentorship, corporate social responsibility",
+          "weight": "0.2",
+          "weight_rationale": "Recognises wider community contribution, mentorship and corporate social responsibility impact.",
+          "max_score": 5
+        },
+        {
+          "description": "Service to Mfantsipim School",
+          "weight": "0.15",
+          "weight_rationale": "Links the nominee’s achievement to direct contribution to Mfantsipim School.",
+          "max_score": 5
+        },
+        {
+          "description": "Character and integrity",
+          "weight": "0.1",
+          "weight_rationale": "Maintains credibility of the award and nominee profile.",
+          "max_score": 5
+        },
+        {
+          "description": "Overall impact on their field, nation or the world",
+          "weight": "0.2",
+          "weight_rationale": "Recognises wider impact beyond individual business or entrepreneurial achievement.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Distinguished Alumnus – Public Service and Governance",
+      "short_name": "DA Public Service and Governance",
+      "group_name": "Distinguished Alumnus",
+      "sort_order": 4,
+      "purpose": "The Distinguished Alumnus Award in Public Service and Governance targets any Mfantsipim Old Boys Association member who has made a significant contribution to society in public service and governance. Their careers and accomplishments should have brought credit and honour to Mfantsipim. Posthumous recognition is permitted.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee’s character and achievements. The proposer must provide a profile or curriculum vitae of the nominee, including reasons for the nomination.",
+      "eligibility_criteria": [
+        "be distinguished in public or civil service or institutional governance",
+        "have received previous recognition from contemporaries",
+        "have made a notable impact in their industry or field or community of endeavour (including national and international contributions) through service, voluntarism or leadership.",
+        "have a sustained record of achievement over their career",
+        "Must have been an alumnus for more than 15 years",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association"
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Professional achievements, including institutional leadership, policy formulation and implementation",
+          "weight": "0.35",
+          "weight_rationale": "Most relevant because the award targets public service, governance and institutional leadership.",
+          "max_score": 5
+        },
+        {
+          "description": "Extension and Community service, including mentorship, influence on national and international policy and advocacy for community development",
+          "weight": "0.2",
+          "weight_rationale": "Captures public value, policy influence and community development contribution.",
+          "max_score": 5
+        },
+        {
+          "description": "Service to Mfantsipim School",
+          "weight": "0.15",
+          "weight_rationale": "Recognises direct contribution to the school community.",
+          "max_score": 5
+        },
+        {
+          "description": "Character and integrity",
+          "weight": "0.1",
+          "weight_rationale": "Critical to public service and governance credibility.",
+          "max_score": 5
+        },
+        {
+          "description": "Overall impact on their field, nation or the world",
+          "weight": "0.2",
+          "weight_rationale": "Recognises broader public and societal impact.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Education Impact Award",
+      "short_name": "Education Impact",
+      "group_name": "Sector / Impact",
+      "sort_order": 5,
+      "purpose": "The Education Impact Award could be awarded to an individual, a group or an association that has made significant or unprecedented impact on education nationwide. The impact must have shaped education generally or specifically policy formulation, implementation or practice.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee's character and achievements and is able to facilitate provision of required supporting verifiable material.",
+      "eligibility_criteria": [
+        "Be any member of the public, a group, an association or an institution well known for their contribution to education in the country."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Scope of successful programs spearheaded by recipient/s",
+          "weight": "0.35",
+          "weight_rationale": "Captures breadth of successful education initiatives.",
+          "max_score": 5
+        },
+        {
+          "description": "Scale of impact of contribution",
+          "weight": "0.4",
+          "weight_rationale": "Most relevant because the award is impact-focused at national level.",
+          "max_score": 5
+        },
+        {
+          "description": "Continued relevance of the achievements",
+          "weight": "0.25",
+          "weight_rationale": "Ensures the achievement remains meaningful and current.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Environmental Sustainability Award",
+      "short_name": "Environmental Sustainability",
+      "group_name": "Sector / Impact",
+      "sort_order": 6,
+      "purpose": "The recipient of the Environmental Sustainability Award must either be an alumnus, or someone closely connected with School like a former teacher and must have made significant contribution to society in Environmental Protection and Sustainability, both nationally and/or internationally.",
+      "nominator_guidance": "A nominee must be proposed by someone who is familiar with the nominee’s character and achievements in Environmental Protection and Sustainability and is able to facilitate provision of the required verifiable supporting material.",
+      "eligibility_criteria": [
+        "Have made significant contribution to society in Environmental Protection and Sustainability, both nationally and /or internationally",
+        "May be given posthumously",
+        "No nominee for an award may be a member of the selection committee for that award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Environmental Protection and Sustainability discovery",
+          "weight": "0.2",
+          "weight_rationale": "Directly reflects the award subject matter.",
+          "max_score": 5
+        },
+        {
+          "description": "Possession of a patent in any field of Environmental Protection and Sustainability",
+          "weight": "0.15",
+          "weight_rationale": "Provides objective evidence where applicable.",
+          "max_score": 5
+        },
+        {
+          "description": "Contribution to current thinking in his field of specialization",
+          "weight": "0.15",
+          "weight_rationale": "Recognises intellectual contribution.",
+          "max_score": 5
+        },
+        {
+          "description": "Recognised and cited by his/her peers in his field of specialization",
+          "weight": "0.15",
+          "weight_rationale": "External validation of impact.",
+          "max_score": 5
+        },
+        {
+          "description": "Advocacy and socio-economic and health impacts that affect livelihoods",
+          "weight": "0.35",
+          "weight_rationale": "Most relevant to wider societal and livelihood impact.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Media and Communications Excellence Award",
+      "short_name": "Media and Communications",
+      "group_name": "Sector / Impact",
+      "sort_order": 7,
+      "purpose": "The recipient of the Media and Communications Excellence Award is an Mfantsipim Old Boys Association (MOBA) member who has made a significant contribution to society and demonstrates potential impactful leadership in Media and Communication. The award also goes to an individual or institution whose contribution to the media and communications field has positively impacted secondary education in Ghana, thereby benefiting Mfantsipim School.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee’s character and achievements and is able to facilitate the provision of required supporting verifiable materials.",
+      "eligibility_criteria": [
+        "Any member of the public or an institution with a demonstrable media and communication initiative(s) targeted at improving secondary education in Ghana"
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Scope of successful programs spearheaded by recipient",
+          "weight": "0.5",
+          "weight_rationale": "Captures breadth and quality of successful media/communication initiatives.",
+          "max_score": 5
+        },
+        {
+          "description": "Scale of impact of program(s) considered for recipient",
+          "weight": "0.5",
+          "weight_rationale": "Impact is central to the award objective.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Science, Technology and Innovation Award",
+      "short_name": "Science and Technology",
+      "group_name": "Sector / Impact",
+      "sort_order": 8,
+      "purpose": "The recipient of the Science, Technology and Innovation Award must either be an alumnus of Mfantsipim, or someone closely connected with the School such as a former teacher and must have made significant contribution to society in Science Technology and Innovation, both nationally and internationally. Award may be given posthumously.",
+      "nominator_guidance": "A nominee must be proposed by someone who is familiar with the nominee’s character and achievements in science, technology, and innovation and is able to facilitate the provision of the required verifiable supporting material.",
+      "eligibility_criteria": [
+        "Must be a scientist or technologist of national or international reputation",
+        "May either be in active work or retired",
+        "Made significant contributions to knowledge in their field of expertise",
+        "No nominee for an award may be a member of the selection committee for that award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Verifiable [patent or publication] Scientific and Technological discovery",
+          "weight": "0.25",
+          "weight_rationale": "Direct evidence of science/technology achievement.",
+          "max_score": 5
+        },
+        {
+          "description": "Fostering and advancing innovation in (groundbreaking) research",
+          "weight": "0.25",
+          "weight_rationale": "Recognises innovation and advancement.",
+          "max_score": 5
+        },
+        {
+          "description": "Contribution to current thinking in field of specialization",
+          "weight": "0.15",
+          "weight_rationale": "Captures intellectual contribution.",
+          "max_score": 5
+        },
+        {
+          "description": "Social, economic, or technical impact of the contributions",
+          "weight": "0.25",
+          "weight_rationale": "Recognises real-world impact.",
+          "max_score": 5
+        },
+        {
+          "description": "Recognised and cited by his/her peers in his field of specialization",
+          "weight": "0.1",
+          "weight_rationale": "External validation of contribution.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Sports Excellence Award",
+      "short_name": "Sports Excellence",
+      "group_name": "Sector / Impact",
+      "sort_order": 9,
+      "purpose": "The recipient of the Sports Excellence Award must either be an alumnus or someone closely connected with School like a former teacher. Award may be given posthumously.",
+      "nominator_guidance": "A nominee must be proposed by someone who is familiar with the nominee’s character and achievements in any field of Sports /Sporting Activity and is able to facilitate provision of the required verifiable supporting material.",
+      "eligibility_criteria": [
+        "Must be a sports personality of national or international reputation",
+        "Must have made significant contributions to society in a sporting discipline",
+        "Successfully participated in a chosen field of sports at the national and /or international level",
+        "Successfully facilitated delivery of sports initiatives at the national and /or international level",
+        "No nominee for an award may be a member of the selection committee for that award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Preferably be the past or current holder of a sporting record at the national and / or international level.",
+          "weight": "0.55",
+          "weight_rationale": "This is the strongest documented achievement indicator in the source criteria.",
+          "max_score": 5
+        },
+        {
+          "description": "Must have trained or mentored other notable sporting personalities in any sports discipline.",
+          "weight": "0.45",
+          "weight_rationale": "Recognises wider contribution through mentorship and development of others.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Emerging Alumnus Leadership Award",
+      "short_name": "Emerging Alumnus",
+      "group_name": "Special / Individual",
+      "sort_order": 10,
+      "purpose": "The recipient of the Emerging Alumnus Award is an Mfantsipim Old Boys Association (MOBA) who has made a significant contribution to society and demonstrates potential impactful leadership in a chosen field of endeavour.",
+      "nominator_guidance": "A nominee must be proposed by someone familiar with the nominee’s character and achievements and is able to facilitate provision of required supporting verifiable material.",
+      "eligibility_criteria": [
+        "Must have been an alumnus for less than 15 years",
+        "Demonstrate thought leadership and strategic influence in defined contemporary global issues using emerging technologies and innovative methods in a chosen field",
+        "Have made impact as characterised by change in direction or trajectory in the operations in the chosen field",
+        "Clearly recognised by their peers as a leader with a proven track record",
+        "No MOBA may be excluded from this award by virtue of any official position held in the Association or participation in the selection of nominees",
+        "No nominee may be a member of the selection committee"
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Demonstrated innovation and impact through the use of emerging technologies to address and solve societal challenges within a specific field.",
+          "weight": "0.45",
+          "weight_rationale": "Core focus of the award and therefore most heavily weighted.",
+          "max_score": 5
+        },
+        {
+          "description": "Evidence of exemplary service to the school and relevant stakeholders",
+          "weight": "0.25",
+          "weight_rationale": "Recognises service and stakeholder impact.",
+          "max_score": 5
+        },
+        {
+          "description": "The evidence should be appropriately validated by documentation, awards and references from peers and colleagues",
+          "weight": "0.3",
+          "weight_rationale": "Validation is central to supporting the nominee’s achievement profile.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "MOBA Fraternity Award",
+      "short_name": "Fraternity",
+      "group_name": "Special / Individual",
+      "sort_order": 11,
+      "purpose": "The MOBA Fraternity Award honours a MOBA member whose personality, contributions, character, or service have earned widespread admiration among peers. The nominee's contributions may be in any field that resonates with the MOBA community. Selection will be determined by popular vote of the MOBA Year Groups in good standing.",
+      "nominator_guidance": "Open nomination. A profile and reason for nomination are required.",
+      "eligibility_criteria": [
+        "Must be a MOBA member in good standing.",
+        "Demonstrated influence or inspiration among the membership.",
+        "Through their actions, have embodied the spirit of MOBA.",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association.",
+        "No nominee for this award may be a member of the selection committee for this award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Positive impact on peers and the wider community.",
+          "weight": "0.25",
+          "weight_rationale": "Captures practical impact beyond popularity.",
+          "max_score": 5
+        },
+        {
+          "description": "Demonstrable embodiment of MOBA spirit, humility, and service.",
+          "weight": "0.3",
+          "weight_rationale": "Central to the award objective.",
+          "max_score": 5
+        },
+        {
+          "description": "Broad peer recognition and respect.",
+          "weight": "0.25",
+          "weight_rationale": "Directly relevant because selection is by popular vote/peer recognition.",
+          "max_score": 5
+        },
+        {
+          "description": "Commitment to the growth and unity of MOBA.",
+          "weight": "0.2",
+          "weight_rationale": "Recognises sustained contribution to MOBA unity.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "MOBA International Ambassador Award",
+      "short_name": "International Ambassador",
+      "group_name": "Special / Individual",
+      "sort_order": 12,
+      "purpose": "The MOBA International Ambassador Award honours an individual who has promoted the values, reputation, and vision of Mfantsipim School on the international stage. Through leadership, diplomacy, advocacy, or representation, they have elevated the School’s international profile.",
+      "nominator_guidance": "Must be proposed by a person familiar with the nominee’s global engagements and contributions. A Profile / CV with reasons is required.",
+      "eligibility_criteria": [
+        "Demonstrated record of international influence, leadership, or ambassadorship.",
+        "Been recognised for strengthening international networks, partnerships, or collaborations.",
+        "Advanced Mfantsipim’s visibility, values internationally.",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association.",
+        "No nominee for this award may be a member of the selection committee for this award."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "International recognition or leadership roles.",
+          "weight": "0.25",
+          "weight_rationale": "Core evidence of international influence.",
+          "max_score": 5
+        },
+        {
+          "description": "Contribution to cross-cultural collaboration and diplomacy.",
+          "weight": "0.2",
+          "weight_rationale": "Recognises quality of international engagement.",
+          "max_score": 5
+        },
+        {
+          "description": "Representation of MOBA/Mfantsipim on a global platform.",
+          "weight": "0.25",
+          "weight_rationale": "Highly relevant to international profile objective.",
+          "max_score": 5
+        },
+        {
+          "description": "Service and mentorship to the MOBA community.",
+          "weight": "0.15",
+          "weight_rationale": "Links global profile back to MOBA community.",
+          "max_score": 5
+        },
+        {
+          "description": "Integrity and embodiment of Mfantsipim values.",
+          "weight": "0.15",
+          "weight_rationale": "Protects credibility of international representation.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Distinguished Edzikanfo Award",
+      "short_name": "Edzikanfo",
+      "group_name": "Special / Institutional",
+      "sort_order": 13,
+      "purpose": "This award is presented to individuals, groups, or institutions that played a significant role in the conception, establishment, and development of Mfantsipim before Ghana’s independence, particularly during its formative years. Posthumous recognition is permitted.",
+      "nominator_guidance": "An individual or group familiar with the nominee’s role and achievements, and able to provide the required supporting verifiable materials, such as reports, testimonials, feedback, or a demonstration of the nominee’s contributions to Mfantsipim School.",
+      "eligibility_criteria": [
+        "Must have a demonstrable and sustained contribution in the conceptualisation, establishment, and growth of Mfantsipim School over a period of five years or more",
+        "Must have received recognition or endorsement from recognised authorities or relevant governing bodies confirming the nominee’s role and impact in their community, industry or profession through service, philanthropy, voluntarism or leadership",
+        "Must have clear leadership and vision that have driven transformative outcomes for Mfantsipim School",
+        "The nominee’s contribution should be limited to the formative years of Mfantsipim."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Contribution to the establishment of Mfantsipim",
+          "weight": "0.3",
+          "weight_rationale": "Core purpose of the award.",
+          "max_score": 5
+        },
+        {
+          "description": "Demonstration of the spirit of voluntarism",
+          "weight": "0.15",
+          "weight_rationale": "Recognises service and voluntarism.",
+          "max_score": 5
+        },
+        {
+          "description": "Demonstration of philanthropy beneficial to Mfantsipim and the community at large",
+          "weight": "0.15",
+          "weight_rationale": "Reflects philanthropic contribution.",
+          "max_score": 5
+        },
+        {
+          "description": "Measurable outcomes such as improved educational quality, student success, or community impact attributed to the nominee's efforts.",
+          "weight": "0.25",
+          "weight_rationale": "Provides objective evidence of impact.",
+          "max_score": 5
+        },
+        {
+          "description": "Evidence of commitment to inclusive, equitable, and value-based education promoting Mfantsipim School’s long-term sustainability and growth.",
+          "weight": "0.15",
+          "weight_rationale": "Recognises long-term educational value and sustainability.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Partner of Impact Award",
+      "short_name": "Partner of Impact",
+      "group_name": "Special / Institutional",
+      "sort_order": 14,
+      "purpose": "The Partner Impact Award recognises a person or organisation whose partnership has made a meaningful and lasting contribution to the growth, development, and mission of Mfantsipim.",
+      "nominator_guidance": "A nomination must come from any person or institution familiar with the partner’s contributions. Supporting documentation is required.",
+      "eligibility_criteria": [
+        "The nominee should have made a significant contribution to the growth, development, and welfare of Mfantsipim. Impact may include but not limited to philanthropy, mentorship, advocacy, or resource development.",
+        "No MOBA member may be excluded from this award by virtue of any official position held in the Association or participation in the selection of nominees."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Tangible contributions to Mfantsipim’s growth, development and welfare",
+          "weight": "0.45",
+          "weight_rationale": "Primary focus of the award.",
+          "max_score": 5
+        },
+        {
+          "description": "Long-term support or strategic partnership.",
+          "weight": "0.3",
+          "weight_rationale": "Recognises sustained partnership value.",
+          "max_score": 5
+        },
+        {
+          "description": "National or community impact linked to Mfantsipim.",
+          "weight": "0.25",
+          "weight_rationale": "Captures wider impact connected to Mfantsipim.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Outstanding Teaching Staff Award",
+      "short_name": "Teaching Staff",
+      "group_name": "Staff",
+      "sort_order": 15,
+      "purpose": "The Outstanding Teaching Staff Award recognises outstanding teachers who have demonstrated exceptional instructional skills, creativity and dedication to students’ success.",
+      "nominator_guidance": "A nominee must be proposed by someone who is familiar with the nominee’s character and achievements in the field of education and is able to facilitate provision of the required verifiable supporting material.",
+      "eligibility_criteria": [
+        "Current teaching staff with a minimum of five (5) years of service to the school.",
+        "All former teaching staff who once served for a minimum of five (5) years in the school."
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Developed and implemented innovative instructional strategy programmes or initiatives that met diverse students’ needs, promoting excellent learning outcomes",
+          "weight": "0.35",
+          "weight_rationale": "Core to instructional skills and creativity.",
+          "max_score": 5
+        },
+        {
+          "description": "Demonstrated significant improvement in students’ achievement, engagement, and motivation in meeting diverse needs of students.",
+          "weight": "0.4",
+          "weight_rationale": "Most relevant to students’ success and learning outcomes.",
+          "max_score": 5
+        },
+        {
+          "description": "Provided effective mentorship and coaching to students and colleague staff.",
+          "weight": "0.25",
+          "weight_rationale": "Recognises support to students and colleagues.",
+          "max_score": 5
+        }
+      ]
+    },
+    {
+      "name": "Outstanding Non-Teaching Staff Award",
+      "short_name": "Non-Teaching Staff",
+      "group_name": "Staff",
+      "sort_order": 16,
+      "purpose": "The Outstanding Non-Teaching Staff Award targets any Non-Teaching staff of Mfantsipim School who has made a significant contribution towards the smooth running of the school and the well-being of its students and staff. His/her dedication to service and accomplishments must be reflected in the overall school environment. Posthumous recognition is permitted.",
+      "nominator_guidance": "A nominee must be proposed by a student, alumnus, teaching staff and fellow non-teaching staff who is familiar with the nominee’s character and achievements. The proposer must provide a profile or curriculum vitae of the nominee, including reasons for the nomination.",
+      "eligibility_criteria": [
+        "All categories of non-teaching staff (Administrative, technical, support services etc.)",
+        "Must have demonstrated high standards of honesty, responsibility and ethical behaviour",
+        "Have provided long-term commitment and reliability in serving the school community",
+        "Must have served for a considerable number years",
+        "All teaching staff are excluded from this award category"
+      ],
+      "achievement_criteria": [
+        {
+          "description": "Dedicated long term service",
+          "weight": "0.25",
+          "weight_rationale": "Reflects sustained service.",
+          "max_score": 5
+        },
+        {
+          "description": "Character and integrity",
+          "weight": "0.2",
+          "weight_rationale": "Directly aligns with honesty/responsibility/ethical behaviour.",
+          "max_score": 5
+        },
+        {
+          "description": "Impact on students and staff",
+          "weight": "0.25",
+          "weight_rationale": "Central to the school environment and well-being objective.",
+          "max_score": 5
+        },
+        {
+          "description": "Demonstration of resilience and adaptability in the face of challenges",
+          "weight": "0.15",
+          "weight_rationale": "Recognises service under changing circumstances.",
+          "max_score": 5
+        },
+        {
+          "description": "Service to Mfantsipim School",
+          "weight": "0.15",
+          "weight_rationale": "Direct contribution to the institution.",
+          "max_score": 5
+        }
+      ]
+    }
+  ]
+}
