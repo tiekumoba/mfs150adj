@@ -5,3 +5,8 @@ export function formatDate(iso: string): string {
     year: "numeric",
   });
 }
+
+/** Only allow http(s) links so imported data can never produce a `javascript:` URL. */
+export function safeHref(url: string): string | undefined {
+  return /^https?:\/\//i.test(url) ? url : undefined;
+}

@@ -7,14 +7,6 @@
  */
 import type { AssignmentStatus } from "@awards/shared";
 
-// MOCK: replace with aggregate queries (COUNT over nominations, users, assignments, evaluations)
-export const mockAdminStats = {
-  totalNominations: 128,
-  totalAdjudicators: 14,
-  pendingAssignments: 37,
-  completedEvaluations: 91,
-};
-
 // MOCK: replace with aggregate queries scoped to the signed-in adjudicator
 export const mockAdjudicatorStats = {
   assignedNominations: 9,
@@ -45,12 +37,4 @@ export const mockCriteria = [
   { id: "c-2", name: "Contribution to MOBA" },
   { id: "c-3", name: "Professional Achievement" },
   { id: "c-4", name: "Community Impact" },
-];
-
-// MOCK: replace with admin-wide `assignments` query joined to users (adjudicators)
-export const mockAdminRecentAssignments = [
-  { id: "a-2001", nominee: "Dr. Kwame Mensah", category: "Lifetime Achievement", adjudicator: "Ama Darko", status: "PENDING" as AssignmentStatus },
-  { id: "a-2002", nominee: "Abena Osei", category: "Young Professional of the Year", adjudicator: "Nii Lamptey", status: "IN_PROGRESS" as AssignmentStatus },
-  { id: "a-2003", nominee: "Efua Sarpong", category: "Excellence in Education", adjudicator: "Ama Darko", status: "COMPLETED" as AssignmentStatus },
-  { id: "a-2004", nominee: "Yaw Boateng", category: "Community Service", adjudicator: "Kojo Antwi", status: "PENDING" as AssignmentStatus },
 ];
