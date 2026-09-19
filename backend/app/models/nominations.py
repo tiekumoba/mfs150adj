@@ -8,7 +8,7 @@ from app.db.base import Base
 from app.models.awards import Award, Category
 from app.models.mixins import CreatedAt, Timestamps, UUIDPrimaryKey, one_of
 
-CANDIDACY_STATUSES = ("pending", "accepted", "rejected", "withdrawn")
+CATEGORY_ENTRY_STATUSES = ("pending", "accepted", "rejected", "withdrawn")
 EVIDENCE_KINDS = ("image", "document")
 
 
@@ -25,16 +25,16 @@ class Nominee(UUIDPrimaryKey, Timestamps, Base):
     name: Mapped[str] = mapped_column(Text)
 
     award: Mapped[Award] = relationship(back_populates="nominees")
-    candidacies: Mapped[list["Candidacy"]] = relationship(back_populates="nominee")
+    category_entries: Mapped[list["CategoryEntry"]] = relationship(back_populates="nominee")
 
 
-class Candidacy(UUIDPrimaryKey, Timestamps, Base):
+class CategoryEntry(UUIDPrimaryKey, Timestamps, Base):
     """A nominee competing in one category. This is the thing adjudicators assess."""
 
-    __tablename__ = "candidacies"
+    __tablename__ = "category_entries"
     __table_args__ = (
         UniqueConstraint("category_id", "nominee_id"),
-        CheckConstraint(one_of("status", CANDIDACY_STATUSES), name="status"),
+        CheckConstraint(one_of("status", CATEGORY_ENTRY_STATUSES), name="status"),
     )
 
     category_id: Mapped[uuid.UUID] = mapped_column(
@@ -47,18 +47,18 @@ class Candidacy(UUIDPrimaryKey, Timestamps, Base):
     status: Mapped[str] = mapped_column(Text)
     status_reason: Mapped[str | None] = mapped_column(Text)
 
-    category: Mapped[Category] = relationship(back_populates="candidacies")
-    nominee: Mapped[Nominee] = relationship(back_populates="candidacies")
-    nominations: Mapped[list["Nomination"]] = relationship(back_populates="candidacy")
+    category: Mapped[Category] = relationship(back_populates="category_entries")
+    nominee: Mapped[Nominee] = relationship(back_populates="category_entries")
+    nominations: Mapped[list["Nomination"]] = relationship(back_populates="category_entry")
 
 
 class Nomination(UUIDPrimaryKey, Timestamps, Base):
-    """One submission by one nominator for a candidacy."""
+    """One submission by one nominator for a category entry."""
 
     __tablename__ = "nominations"
 
-    candidacy_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("candidacies.id", ondelete="RESTRICT")
+    category_entry_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("category_entries.id", ondelete="RESTRICT")
     )
     # Hidden from adjudicators while awards.reveal_nominator_details is false.
     nominator_name: Mapped[str] = mapped_column(Text)
@@ -67,7 +67,7 @@ class Nomination(UUIDPrimaryKey, Timestamps, Base):
     # Source value ("independent" so far); no CHECK until all values are known.
     submission_status: Mapped[str] = mapped_column(Text)
 
-    candidacy: Mapped[Candidacy] = relationship(back_populates="nominations")
+    category_entry: Mapped[CategoryEntry] = relationship(back_populates="nominations")
     evidence: Mapped[list["NominationEvidence"]] = relationship(back_populates="nomination")
 
 

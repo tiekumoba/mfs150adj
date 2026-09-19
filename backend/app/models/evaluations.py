@@ -15,7 +15,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.awards import AchievementCriterion, EligibilityCriterion
 from app.models.mixins import Timestamps, UUIDPrimaryKey, one_of
-from app.models.nominations import Candidacy
+from app.models.nominations import CategoryEntry
 from app.models.users import AdjudicatorAssignment
 
 EVALUATION_STATUSES = ("draft", "submitted", "reopened")
@@ -24,14 +24,14 @@ CONFLICT_STATUSES = ("declared", "cleared")
 
 
 class Evaluation(UUIDPrimaryKey, Timestamps, Base):
-    """One adjudicator's independent assessment of one candidacy.
+    """One adjudicator's independent assessment of one category entry.
 
     No row means "not started".
     """
 
     __tablename__ = "evaluations"
     __table_args__ = (
-        UniqueConstraint("assignment_id", "candidacy_id"),
+        UniqueConstraint("assignment_id", "category_entry_id"),
         CheckConstraint(one_of("status", EVALUATION_STATUSES), name="status"),
         CheckConstraint(
             "status <> 'submitted' OR submitted_at IS NOT NULL", name="submitted_has_time"
@@ -41,15 +41,15 @@ class Evaluation(UUIDPrimaryKey, Timestamps, Base):
     assignment_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("adjudicator_assignments.id", ondelete="RESTRICT")
     )
-    candidacy_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("candidacies.id", ondelete="RESTRICT")
+    category_entry_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("category_entries.id", ondelete="RESTRICT")
     )
     status: Mapped[str] = mapped_column(Text)
     conclusion: Mapped[str | None] = mapped_column(Text)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     assignment: Mapped[AdjudicatorAssignment] = relationship(back_populates="evaluations")
-    candidacy: Mapped[Candidacy] = relationship()
+    category_entry: Mapped[CategoryEntry] = relationship()
     eligibility_checks: Mapped[list["EvaluationEligibilityCheck"]] = relationship(
         back_populates="evaluation"
     )
@@ -108,11 +108,11 @@ class EvaluationScore(UUIDPrimaryKey, Timestamps, Base):
 
 
 class AdjudicatorConflict(UUIDPrimaryKey, Timestamps, Base):
-    """An adjudicator declares that they cannot fairly assess a candidacy."""
+    """An adjudicator declares that they cannot fairly assess a category entry."""
 
     __tablename__ = "adjudicator_conflicts"
     __table_args__ = (
-        UniqueConstraint("assignment_id", "candidacy_id"),
+        UniqueConstraint("assignment_id", "category_entry_id"),
         CheckConstraint(one_of("status", CONFLICT_STATUSES), name="status"),
         CheckConstraint(
             "status <> 'cleared' OR (cleared_at IS NOT NULL "
@@ -125,8 +125,8 @@ class AdjudicatorConflict(UUIDPrimaryKey, Timestamps, Base):
         UUID(as_uuid=True), ForeignKey("adjudicator_assignments.id", ondelete="RESTRICT")
     )
     # Must be in the assignment's category (service layer).
-    candidacy_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("candidacies.id", ondelete="RESTRICT")
+    category_entry_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("category_entries.id", ondelete="RESTRICT")
     )
     status: Mapped[str] = mapped_column(Text)
     reason: Mapped[str] = mapped_column(Text)
@@ -136,4 +136,4 @@ class AdjudicatorConflict(UUIDPrimaryKey, Timestamps, Base):
     clear_reason: Mapped[str | None] = mapped_column(Text)
 
     assignment: Mapped[AdjudicatorAssignment] = relationship(back_populates="conflicts")
-    candidacy: Mapped[Candidacy] = relationship()
+    category_entry: Mapped[CategoryEntry] = relationship()

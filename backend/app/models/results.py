@@ -19,7 +19,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.awards import Category
 from app.models.mixins import CreatedAt, UUIDPrimaryKey, one_of
-from app.models.nominations import Candidacy
+from app.models.nominations import CategoryEntry
 
 RESULT_OUTCOMES = ("ranked", "ineligible", "insufficient_evaluations")
 
@@ -63,11 +63,11 @@ class CategoryResult(UUIDPrimaryKey, CreatedAt, Base):
 
 
 class CategoryResultEntry(UUIDPrimaryKey, Base):
-    """One row per accepted candidacy in the category."""
+    """One row per accepted category entry in the category."""
 
     __tablename__ = "category_result_entries"
     __table_args__ = (
-        UniqueConstraint("result_id", "candidacy_id"),
+        UniqueConstraint("result_id", "category_entry_id"),
         CheckConstraint(one_of("outcome", RESULT_OUTCOMES), name="outcome"),
         CheckConstraint(
             "(outcome = 'ranked') = (rank IS NOT NULL AND total_score IS NOT NULL)",
@@ -78,8 +78,8 @@ class CategoryResultEntry(UUIDPrimaryKey, Base):
     result_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("category_results.id", ondelete="CASCADE")
     )
-    candidacy_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("candidacies.id", ondelete="RESTRICT")
+    category_entry_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("category_entries.id", ondelete="RESTRICT")
     )
     outcome: Mapped[str] = mapped_column(Text)  # the final outcome, not an adjudicator's
     rank: Mapped[int | None] = mapped_column(Integer)
@@ -87,4 +87,4 @@ class CategoryResultEntry(UUIDPrimaryKey, Base):
     evaluation_count: Mapped[int] = mapped_column(Integer)
 
     result: Mapped[CategoryResult] = relationship(back_populates="entries")
-    candidacy: Mapped[Candidacy] = relationship()
+    category_entry: Mapped[CategoryEntry] = relationship()

@@ -70,7 +70,9 @@ class Category(UUIDPrimaryKey, Timestamps, Base):
     tie_break_rules: Mapped[list["TieBreakRule"]] = relationship(
         back_populates="category", order_by="TieBreakRule.sort_order"
     )
-    candidacies: Mapped[list["Candidacy"]] = relationship(back_populates="category")  # noqa: F821
+    category_entries: Mapped[list["CategoryEntry"]] = relationship(  # noqa: F821
+        back_populates="category"
+    )
     assignments: Mapped[list["AdjudicatorAssignment"]] = relationship(  # noqa: F821
         back_populates="category"
     )
