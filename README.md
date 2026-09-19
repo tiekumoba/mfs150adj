@@ -1,78 +1,101 @@
-# Awards Adjudication System
+# Awards Adjudication
 
-Internal system for nominating, assigning, evaluating and scoring award nominations.
+React + Vite frontend, FastAPI backend, Neon PostgreSQL, Clerk authentication.
 
-| Concern | Choice |
-| --- | --- |
-| Frontend | React + TypeScript + Vite, Tailwind CSS v4, shadcn/ui-style components — Vercel |
-| Backend | Express 5 + TypeScript — Render Web Service |
-| Database | Neon PostgreSQL (plain SQL migrations) |
-| Auth | Clerk sign-in; roles and access come from our `users` table |
-| Later | WordPress file storage, Brevo email, Render Cron Jobs, Turnstile |
+This is the foundation only: sign-in, a protected dashboard placeholder, a protected `/api/v1/me` endpoint and migration tooling. No awards features yet.
 
-## Structure
+## 1. Project structure
 
 ```
-frontend/   React app (Vercel)
-backend/    HTTP API (Render) — routes → controllers → services → db
-  db/migrations/   SQL schema
-shared/     Types/constants used by both (roles, statuses, API shapes)
-docs/       Architecture and deployment notes
+frontend/            React + Vite + TypeScript
+  src/
+    components/      Shared components (ProtectedRoute)
+    layouts/         AppLayout (header + outlet)
+    pages/           SignIn, Dashboard, NotFound
+    hooks/           useApi (API client bound to the Clerk token)
+    lib/             api.ts (fetch wrapper + error handling)
+    routes/          Route table
+backend/             FastAPI
+  app/
+    main.py          App, CORS, error handler
+    api/             deps.py (auth dependency) and v1/ routers
+    core/            Settings from environment variables
+    db/              SQLAlchemy base + async session
+    models/          SQLAlchemy models (none yet)
+    schemas/         Pydantic schemas
+    services/        Business logic (Clerk JWT verification)
+  alembic/           Migrations
 ```
 
-npm workspaces monorepo. `shared` compiles to `shared/dist` (done automatically by `npm install`).
+## 2. Requirements
 
-## Local development
+- Node.js 20+ and npm
+- Python 3.10+
+- A [Neon](https://neon.tech) project
+- A [Clerk](https://clerk.com) application
 
-Requires Node 22+.
+## 3. Environment variables
 
-```bash
-npm install
+Copy each `.env.example` to `.env` (`.env` files are git-ignored).
 
-# Backend  → http://localhost:4000
-cp backend/.env.example backend/.env      # then edit DATABASE_URL (optional to boot)
-npm run dev:backend
-
-# Frontend → http://localhost:5173  (second terminal)
-cp frontend/.env.example frontend/.env.local
-npm run dev:frontend
-
-# Database (needs DATABASE_URL in backend/.env)
-npm run db:migrate
-
-# Create the first admin (must match the email used to sign in with Clerk)
-npm run db:seed-admin -- you@example.org "Your Name"
-```
-
-Check the API: `curl localhost:4000/health`
-
-Routes: `/`, `/login`, `/admin`, `/adjudicator`, `/adjudicator/evaluations/a-1001` (all except `/` and `/login` need sign-in)
-
-If you edit `shared/src`, run `npm run build -w shared` (the `typecheck`/`build` scripts do this for you).
-
-## Checks
-
-```bash
-npm run typecheck && npm run lint && npm run build   # or: npm run check
-```
-
-## Environment variables
-
-Backend (`backend/.env`):
-
-| Variable | Required | Notes |
+| File | Variable | Purpose |
 | --- | --- | --- |
-| `NODE_ENV` | no | `development` (default) / `production` |
-| `PORT` | no | default `4000` (Render sets this) |
-| `CORS_ORIGINS` | no | comma-separated allowed origins; default `http://localhost:5173` |
-| `DATABASE_URL` | production | Neon connection string (`?sslmode=require`) |
-| `CLERK_SECRET_KEY` | yes | Clerk secret key; without it every `/api` route returns 501 |
+| `frontend/.env` | `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
+| | `VITE_API_URL` | Backend base URL, e.g. `http://localhost:8000` |
+| `backend/.env` | `DATABASE_URL` | Neon connection string |
+| | `CLERK_JWKS_URL` | Clerk JWKS endpoint |
+| | `CLERK_ISSUER` | Clerk Frontend API URL (token `iss` claim) |
+| | `CORS_ORIGINS` | Comma-separated allowed origins, e.g. `http://localhost:5173` |
 
-Frontend (`frontend/.env.local`, `VITE_` values are public — never put secrets here):
+## 4. Local frontend setup
 
-| Variable | Notes |
-| --- | --- |
-| `VITE_API_URL` | backend base URL, default `http://localhost:4000` |
-| `VITE_CLERK_PUBLISHABLE_KEY` | required |
+```bash
+cd frontend
+cp .env.example .env   # then fill in values
+npm install
+npm run dev            # http://localhost:5173
+```
 
-See [docs/architecture.md](docs/architecture.md) for schema, auth plan and deployment settings.
+## 5. Local backend setup
+
+```bash
+cd backend
+cp .env.example .env   # then fill in values
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload   # http://localhost:8000
+```
+
+Interactive API docs: http://localhost:8000/docs
+
+## 6. Neon database setup
+
+1. Create a project in the Neon console.
+2. Click **Connect** and copy the connection string.
+3. Put it in `backend/.env` as `DATABASE_URL`. The standard `postgresql://...?sslmode=require` form works; the app converts it for the async driver.
+
+## 7. Clerk setup
+
+1. Create an application in the Clerk dashboard and enable your sign-in methods.
+2. **API keys** → copy the publishable key into `VITE_CLERK_PUBLISHABLE_KEY`.
+3. **API keys → Show API URLs** (or Domains) → find your Frontend API URL, e.g. `https://your-app.clerk.accounts.dev`.
+   - `CLERK_ISSUER` = that URL, with no trailing slash.
+   - `CLERK_JWKS_URL` = that URL + `/.well-known/jwks.json`.
+
+## 8. Running migrations
+
+From `backend/` with the venv active:
+
+```bash
+alembic upgrade head                            # apply migrations
+alembic revision --autogenerate -m "message"    # create one after adding models
+```
+
+Tables are only ever created through Alembic, never at app startup. Import new model modules in `app/models/__init__.py` so autogenerate can see them.
+
+## 9. Running the application
+
+1. Start the backend (section 5) and the frontend (section 4).
+2. Check `curl http://localhost:8000/api/v1/health` returns `{"status":"ok"}`.
+3. Open http://localhost:5173, sign in, and the dashboard shows the Clerk user ID returned by `GET /api/v1/me`.

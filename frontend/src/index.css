@@ -1,58 +1,63 @@
-@import "tailwindcss";
-
 :root {
-  --radius: 0.5rem;
-  --background: oklch(0.985 0.002 250);
-  --foreground: oklch(0.21 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.02 260);
-  --primary: oklch(0.36 0.09 265);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.96 0.005 250);
-  --secondary-foreground: oklch(0.25 0.02 260);
-  --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.5 0.02 260);
-  --accent: oklch(0.95 0.01 250);
-  --accent-foreground: oklch(0.25 0.02 260);
-  --destructive: oklch(0.577 0.245 27);
-  --border: oklch(0.91 0.008 250);
-  --input: oklch(0.88 0.01 250);
-  --ring: oklch(0.55 0.1 265);
-  --sidebar: oklch(0.2 0.03 265);
-  --sidebar-foreground: oklch(0.9 0.01 250);
-  --sidebar-accent: oklch(0.29 0.04 265);
+  --bg: #f7f7f8;
+  --surface: #ffffff;
+  --text: #1a1a1f;
+  --muted: #6b6b76;
+  --border: #e3e3e8;
+  --accent: #4f46e5;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+* {
+  box-sizing: border-box;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.app-main {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.status,
+.muted {
+  color: var(--muted);
+}
+
+.status {
+  padding: 2rem;
+  text-align: center;
 }
