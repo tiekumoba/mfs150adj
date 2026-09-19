@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AuthProvider, RequireRole } from "@/lib/auth";
 import { adjudicatorNav, adminNav } from "@/lib/nav";
 import AdjudicatorDashboard from "@/pages/AdjudicatorDashboard";
+import AdminAdjudicators from "@/pages/AdminAdjudicators";
 import AdminCategories from "@/pages/AdminCategories";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminNominationDetail from "@/pages/AdminNominationDetail";
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="nominations" element={<AdminNominations />} />
             <Route path="nominations/:id" element={<AdminNominationDetail />} />
             <Route path="categories" element={<AdminCategories />} />
+            <Route path="adjudicators" element={<AdminAdjudicators />} />
             <Route path=":section" element={<AdminSection />} />
           </Route>
 

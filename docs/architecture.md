@@ -44,6 +44,11 @@ All under `/api`, all require a signed-in invited user (see Authentication).
 | `GET /api/admin/stats` | ADMIN | dashboard counts |
 | `GET /api/nominations` | ADMIN | `?categoryId=&q=&page=&pageSize=` (max 100) |
 | `GET /api/nominations/:id` | ADMIN | includes supporting-evidence links |
+| `GET /api/adjudicators` | ADMIN | status: invited (never signed in) / active / deactivated |
+| `POST /api/adjudicators` | ADMIN | `{email, fullName}`; always creates the ADJUDICATOR role; 409 if email exists |
+| `PATCH /api/adjudicators/:id` | ADMIN | `{isActive}`; deactivating blocks sign-in |
+
+Adjudicator changes are recorded in `audit_logs`. Adding an adjudicator only creates their `users` row; an admin must also invite the same email in the Clerk dashboard so they can set a password.
 
 Public: `GET /health`, `GET /health/db`.
 
