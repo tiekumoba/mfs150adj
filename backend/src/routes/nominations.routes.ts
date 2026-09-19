@@ -9,6 +9,7 @@ import {
   nominationHistory,
   nominationParams,
   removeDocument,
+  removeDocumentBody,
   updateNomination,
   updateNominationBody,
 } from "../controllers/nominations.controller.js";
@@ -22,4 +23,4 @@ nominationsRouter.get("/:id", validate({ params: nominationParams }), getNominat
 nominationsRouter.patch("/:id", validate({ params: nominationParams, body: updateNominationBody }), updateNomination);
 nominationsRouter.get("/:id/history", validate({ params: nominationParams }), nominationHistory);
 nominationsRouter.post("/:id/documents", validate({ params: nominationParams, body: addDocumentBody }), addDocument);
-nominationsRouter.delete("/:id/documents/:documentId", validate({ params: documentParams }), removeDocument);
+nominationsRouter.delete("/:id/documents/:documentId", validate({ params: documentParams, body: removeDocumentBody }), removeDocument);

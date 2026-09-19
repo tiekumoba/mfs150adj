@@ -30,14 +30,15 @@ export async function recordAudit(
     action: string;
     entityType: string;
     entityId: string;
+    reason: string;
     changes?: AuditChange[];
     metadata?: Record<string, unknown>;
   },
 ): Promise<void> {
   await client.query(
     `INSERT INTO audit_logs
-       (actor_user_id, actor_email, source, ip_address, user_agent, action, entity_type, entity_id, changes, metadata)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+       (actor_user_id, actor_email, source, ip_address, user_agent, action, entity_type, entity_id, changes, metadata, reason)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
     [
       ctx.actorUserId,
       ctx.actorEmail,
@@ -49,6 +50,7 @@ export async function recordAudit(
       entry.entityId,
       entry.changes ? JSON.stringify(entry.changes) : null,
       JSON.stringify(entry.metadata ?? {}),
+      entry.reason,
     ],
   );
 }

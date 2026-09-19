@@ -37,6 +37,7 @@ export async function listAdjudicators(): Promise<AdjudicatorDto[]> {
 
 export async function createAdjudicator(
   input: { email: string; fullName: string },
+  reason: string,
   ctx: AuditContext,
 ): Promise<AdjudicatorDto> {
   const client = await getPool().connect();
@@ -53,6 +54,7 @@ export async function createAdjudicator(
       action: "adjudicator.created",
       entityType: "user",
       entityId: id,
+      reason,
       metadata: { email: input.email.toLowerCase() },
       changes: [{ field: "email", from: null, to: input.email.toLowerCase() }],
     });
@@ -73,6 +75,7 @@ export async function createAdjudicator(
 export async function setAdjudicatorActive(
   id: string,
   isActive: boolean,
+  reason: string,
   ctx: AuditContext,
 ): Promise<AdjudicatorDto> {
   const client = await getPool().connect();
@@ -89,6 +92,7 @@ export async function setAdjudicatorActive(
       action: isActive ? "adjudicator.reactivated" : "adjudicator.deactivated",
       entityType: "user",
       entityId: id,
+      reason,
       changes: [{ field: "isActive", from: String(!isActive), to: String(isActive) }],
     });
     await client.query("COMMIT");

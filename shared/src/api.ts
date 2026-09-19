@@ -60,6 +60,7 @@ export interface AuditEntryDto {
   source: "web" | "import" | "script";
   ipAddress: string | null;
   createdAt: string;
+  reason: string | null;
   changes: AuditChange[];
 }
 

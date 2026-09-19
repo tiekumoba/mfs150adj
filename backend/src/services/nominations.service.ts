@@ -110,6 +110,7 @@ const blankToNull = (v: string | null | undefined) => (v === undefined ? undefin
 export async function updateNomination(
   id: string,
   input: NominationUpdate,
+  reason: string,
   ctx: AuditContext,
 ): Promise<NominationDetail> {
   const client = await getPool().connect();
@@ -165,6 +166,7 @@ export async function updateNomination(
         action: "nomination.updated",
         entityType: "nomination",
         entityId: id,
+        reason,
         changes,
         metadata: { nomineeName: input.nomineeName ?? current.nominee_name },
       });
@@ -182,6 +184,7 @@ export async function updateNomination(
 export async function addDocument(
   nominationId: string,
   input: { kind: EvidenceKind; url: string; fileName?: string | null },
+  reason: string,
   ctx: AuditContext,
 ): Promise<NominationDetail> {
   const client = await getPool().connect();
@@ -197,6 +200,7 @@ export async function addDocument(
       action: "nomination.evidence_added",
       entityType: "nomination",
       entityId: nominationId,
+      reason,
       changes: [{ field: "evidence", from: null, to: input.url }],
     });
     await client.query("COMMIT");
@@ -215,6 +219,7 @@ export async function addDocument(
 export async function removeDocument(
   nominationId: string,
   documentId: string,
+  reason: string,
   ctx: AuditContext,
 ): Promise<NominationDetail> {
   const client = await getPool().connect();
@@ -229,6 +234,7 @@ export async function removeDocument(
       action: "nomination.evidence_removed",
       entityType: "nomination",
       entityId: nominationId,
+      reason,
       changes: [{ field: "evidence", from: rows[0].url, to: null }],
     });
     await client.query("COMMIT");
@@ -250,9 +256,10 @@ export async function getNominationHistory(nominationId: string): Promise<AuditE
     source: AuditEntryDto["source"];
     ip_address: string | null;
     created_at: Date;
+    reason: string | null;
     changes: AuditChange[] | null;
   }>(
-    `SELECT a.id, a.action, u.full_name AS actor_name, a.actor_email, a.source, a.ip_address, a.created_at, a.changes
+    `SELECT a.id, a.action, u.full_name AS actor_name, a.actor_email, a.source, a.ip_address, a.created_at, a.reason, a.changes
        FROM audit_logs a LEFT JOIN users u ON u.id = a.actor_user_id
       WHERE a.entity_type = 'nomination' AND a.entity_id = $1
       ORDER BY a.created_at DESC, a.id DESC`,
@@ -266,6 +273,7 @@ export async function getNominationHistory(nominationId: string): Promise<AuditE
     source: r.source,
     ipAddress: r.ip_address,
     createdAt: r.created_at.toISOString(),
+    reason: r.reason,
     changes: r.changes ?? [],
   }));
 }

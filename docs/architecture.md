@@ -54,7 +54,7 @@ All under `/api`, all require a signed-in invited user (see Authentication).
 
 ## Audit trail
 
-Every admin change writes an `audit_logs` row in the same transaction as the change: **who** (`actor_user_id`, `actor_email` snapshot), **where from** (`source` = web/import/script, `ip_address`, `user_agent`), **what** (`action`, `entity_type`/`entity_id`, `changes` = list of field / old value / new value) and **when** (`created_at`). Saving with no real change writes nothing. The table is append-only: a database trigger rejects any UPDATE or DELETE. The nomination page shows its history.
+Every admin change writes an `audit_logs` row in the same transaction as the change: **who** (`actor_user_id`, `actor_email` snapshot), **where from** (`source` = web/import/script, `ip_address`, `user_agent`), **what** (`action`, `entity_type`/`entity_id`, `changes` = list of field / old value / new value), **why** (`reason`) and **when** (`created_at`). Every audited request (edit nomination, add/remove evidence, add/activate/deactivate adjudicator) must include a `reason` of 3 to 500 characters, or the API returns 400. Saving with no real change writes nothing. The table is append-only: a database trigger rejects any UPDATE or DELETE. The nomination page shows its history.
 
 Adjudicator changes are recorded in `audit_logs`. Adding an adjudicator only creates their `users` row; an admin must also invite the same email in the Clerk dashboard so they can set a password.
 

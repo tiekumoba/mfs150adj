@@ -140,8 +140,8 @@ function NominationDetailView({ id }: { id: string }) {
           <EvidenceCard
             nomination={n}
             onAdd={(body) => send(`/api/nominations/${id}/documents`, { method: "POST", body }, "Evidence added.")}
-            onRemove={(docId) =>
-              send(`/api/nominations/${id}/documents/${docId}`, { method: "DELETE" }, "Evidence removed.")
+            onRemove={(docId, reason) =>
+              send(`/api/nominations/${id}/documents/${docId}`, { method: "DELETE", body: { reason } }, "Evidence removed.")
             }
           />
           <HistoryCard id={id} reloadToken={historyToken} />
@@ -159,19 +159,20 @@ function EditForm({
 }: {
   nomination: NominationDetail;
   categories: CategoryDto[];
-  onSave: (changes: NominationUpdate) => Promise<void>;
+  onSave: (changes: NominationUpdate & { reason: string }) => Promise<void>;
   onCancel: () => void;
 }) {
   const [nomineeName, setNomineeName] = useState(n.nomineeName);
   const [nominatorName, setNominatorName] = useState(n.nominatorName ?? "");
   const [categoryId, setCategoryId] = useState(n.categoryId);
   const [citation, setCitation] = useState(n.citation ?? "");
+  const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
-    await onSave({ nomineeName, nominatorName, categoryId, citation });
+    await onSave({ nomineeName, nominatorName, categoryId, citation, reason: reason.trim() });
     setBusy(false);
   }
 
@@ -209,6 +210,19 @@ function EditForm({
             <Label htmlFor="citation">Justification</Label>
             <Textarea id="citation" className="min-h-40" maxLength={20000} value={citation} onChange={(e) => setCitation(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="reason">Reason for change (required)</Label>
+            <Textarea
+              id="reason"
+              required
+              minLength={3}
+              maxLength={500}
+              className="min-h-20"
+              placeholder="Why are you making this change? This is saved in the change history."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+          </div>
           <div className="flex gap-3">
             <Button type="submit" disabled={busy}>{busy ? "Saving…" : "Save changes"}</Button>
             <Button type="button" variant="outline" onClick={onCancel} disabled={busy}>Cancel</Button>
@@ -225,18 +239,30 @@ function EvidenceCard({
   onRemove,
 }: {
   nomination: NominationDetail;
-  onAdd: (body: { kind: EvidenceKind; url: string; fileName: string }) => Promise<boolean>;
-  onRemove: (documentId: string) => Promise<boolean>;
+  onAdd: (body: { kind: EvidenceKind; url: string; fileName: string; reason: string }) => Promise<boolean>;
+  onRemove: (documentId: string, reason: string) => Promise<boolean>;
 }) {
   const [kind, setKind] = useState<EvidenceKind>("document");
   const [url, setUrl] = useState("");
   const [fileName, setFileName] = useState("");
+  const [addReason, setAddReason] = useState("");
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [removeReason, setRemoveReason] = useState("");
 
   async function add(e: FormEvent) {
     e.preventDefault();
-    if (await onAdd({ kind, url: url.trim(), fileName })) {
+    if (await onAdd({ kind, url: url.trim(), fileName, reason: addReason.trim() })) {
       setUrl("");
       setFileName("");
+      setAddReason("");
+    }
+  }
+
+  async function remove(e: FormEvent, documentId: string) {
+    e.preventDefault();
+    if (await onRemove(documentId, removeReason.trim())) {
+      setRemovingId(null);
+      setRemoveReason("");
     }
   }
 
@@ -253,7 +279,8 @@ function EvidenceCard({
             {n.documents.map((d) => {
               const href = safeHref(d.url);
               return (
-                <li key={d.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <li key={d.id} className="py-2 text-sm">
+                  <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-2">
                     <Badge variant="secondary">{kindLabel[d.kind]}</Badge>
                     <span className="truncate">{d.fileName ?? d.url}</span>
@@ -269,12 +296,24 @@ function EvidenceCard({
                       size="icon"
                       aria-label={`Remove ${d.fileName ?? d.url}`}
                       onClick={() => {
-                        if (window.confirm("Remove this evidence link from the nomination?")) void onRemove(d.id);
+                        setRemovingId(d.id);
+                        setRemoveReason("");
                       }}
                     >
                       <Trash2 />
                     </Button>
                   </span>
+                  </div>
+                  {removingId === d.id && (
+                    <form onSubmit={(e) => remove(e, d.id)} className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
+                      <div className="flex-1 space-y-1.5">
+                        <Label htmlFor={`rm-${d.id}`}>Reason for removing (required)</Label>
+                        <Input id={`rm-${d.id}`} required minLength={3} maxLength={500} value={removeReason} onChange={(e) => setRemoveReason(e.target.value)} />
+                      </div>
+                      <Button type="submit" variant="destructive">Remove</Button>
+                      <Button type="button" variant="outline" onClick={() => setRemovingId(null)}>Cancel</Button>
+                    </form>
+                  )}
                 </li>
               );
             })}
@@ -297,7 +336,11 @@ function EvidenceCard({
             <Label htmlFor="ev-name">File name (optional)</Label>
             <Input id="ev-name" maxLength={255} value={fileName} onChange={(e) => setFileName(e.target.value)} />
           </div>
-          <Button type="submit" variant="outline">Add</Button>
+          <div className="space-y-1.5 sm:col-span-4">
+            <Label htmlFor="ev-reason">Reason for adding (required)</Label>
+            <Input id="ev-reason" required minLength={3} maxLength={500} value={addReason} onChange={(e) => setAddReason(e.target.value)} />
+          </div>
+          <Button type="submit" variant="outline" className="sm:col-span-4 sm:justify-self-start">Add evidence</Button>
         </form>
       </CardContent>
     </Card>
@@ -327,6 +370,10 @@ function HistoryCard({ id, reloadToken }: { id: string; reloadToken: number }) {
                   {new Date(e.createdAt).toLocaleString("en-GB")} · by {e.actorName ?? e.actorEmail ?? "unknown"}
                   {e.actorName && e.actorEmail ? ` (${e.actorEmail})` : ""} · via {e.source === "web" ? "web app" : e.source}
                   {e.ipAddress ? ` · IP ${e.ipAddress}` : ""}
+                </p>
+                <p className="mt-1">
+                  <span className="text-muted-foreground">Reason:</span>{" "}
+                  {e.reason ?? <span className="italic text-muted-foreground">No reason recorded</span>}
                 </p>
                 <ul className="mt-1 space-y-0.5">
                   {e.changes.map((c, i) => (
