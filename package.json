@@ -19,7 +19,8 @@
     "typecheck": "npm run build -w shared && npm run typecheck -w backend && npm run typecheck -w frontend",
     "lint": "eslint .",
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
-    "check": "npm run typecheck && npm run lint && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run build",
+    "db:seed-admin": "npm run db:seed-admin -w backend --"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
