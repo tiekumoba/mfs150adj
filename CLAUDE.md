@@ -9,6 +9,12 @@ Monorepo: `frontend/` (React + Vite + TypeScript + React Router + Clerk) and `ba
 - Keep dependencies to a minimum.
 - Backend: type hints everywhere, SQLAlchemy 2.x style, Pydantic schemas separate from models, routers in `app/api/v1/` with logic in `app/services/`.
 - Frontend: TypeScript, plain CSS, API calls go through `src/lib/api.ts` via the `useApi` hook.
+- API design: read `RESTAPI.md` (Microsoft REST API guidelines) before writing or changing any endpoint, and follow it. Conventions we apply from it:
+  - Plural-noun collection URIs (`/nominations`, `/nominations/{id}`), no verbs in paths, nesting no deeper than collection/item/collection, and don't mirror DB tables one to one.
+  - Verbs and status codes: GET 200/404; POST 201 with a `Location` header (400 for a POST to an item URI); PUT full and idempotent; PATCH partial (merge-patch style); DELETE 204/404; 409 for state conflicts.
+  - Collections take `limit` (default 25, capped) and `offset`, plus explicit filters and `sort` where needed.
+  - Versioning is URI-based (`/api/v1`). Adding fields is non-breaking; renaming or removing one needs a new version.
+  - Not adopted unless requested: HATEOAS links, XML, async 202 patterns, multitenancy.
 - Tables are created only through Alembic, never at app startup.
 - Never commit `.env` files. CORS origins are explicit, never `*`.
 - Git: work on feature branches, never merge to main, don't push or commit unless asked, no Claude co-author lines.
