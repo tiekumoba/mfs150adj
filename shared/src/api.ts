@@ -67,3 +67,14 @@ export interface MeResponse {
     role: import("./roles.js").Role;
   };
 }
+
+export interface AdjudicatorDto {
+  id: string;
+  email: string;
+  fullName: string;
+  isActive: boolean;
+  /** True once the person has signed in with Clerk at least once. */
+  hasSignedIn: boolean;
+  assignmentCount: number;
+  createdAt: string;
+}

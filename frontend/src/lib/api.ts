@@ -10,10 +10,19 @@ export class ApiError extends Error {
   }
 }
 
-/** Calls the backend API with the Clerk session token. */
-export async function apiFetch<T>(path: string, token: string | null): Promise<T> {
+/** Calls the backend API with the Clerk session token. `body` is sent as JSON. */
+export async function apiFetch<T>(
+  path: string,
+  token: string | null,
+  init: { method?: string; body?: unknown } = {},
+): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    method: init.method,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(init.body !== undefined ? { "Content-Type": "application/json" } : {}),
+    },
+    body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
   });
   const body = await res.json().catch(() => null);
   if (!res.ok) {
