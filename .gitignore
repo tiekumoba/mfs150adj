@@ -29,3 +29,6 @@ coverage/
 !.vscode/extensions.json
 *.swp
 .claude/
+
+# Personal data used for one-off imports. Never commit.
+backend/data/

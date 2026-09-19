@@ -20,7 +20,8 @@
     "lint": "eslint .",
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
     "check": "npm run typecheck && npm run lint && npm run build",
-    "db:seed-admin": "npm run db:seed-admin -w backend --"
+    "db:seed-admin": "npm run db:seed-admin -w backend --",
+    "db:import": "npm run db:import -w backend --"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -10,7 +10,8 @@
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "db:migrate": "tsx src/db/migrate.ts",
-    "db:seed-admin": "tsx src/db/seed-admin.ts"
+    "db:seed-admin": "tsx src/db/seed-admin.ts",
+    "db:import": "tsx src/db/import-nominations.ts"
   },
   "dependencies": {
     "@awards/shared": "*",
