@@ -45,7 +45,7 @@ export default function App() {
       <AuthRoot>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login/*" element={<Login />} />
 
           <Route
             path="/admin"
