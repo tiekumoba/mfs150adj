@@ -20,3 +20,6 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+
+# Source workbooks (not committed)
+backend/docs/MOBA@150 Awards_Nominee Evaluation Framework/
