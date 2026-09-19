@@ -19,7 +19,7 @@ export function DashboardPage() {
   return (
     <>
       <h1>Dashboard</h1>
-      <p>Placeholder — awards functionality comes later.</p>
+      <p>Placeholder — awards functionality comes later. (Deploy test)</p>
       {/* Temporary check that the token round-trips to the backend. */}
       <p className="muted">
         {error ? `API error: ${error}` : me ? `Backend sees you as ${me.user_id}` : "Checking API…"}
