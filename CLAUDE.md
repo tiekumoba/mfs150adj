@@ -23,6 +23,7 @@ Monorepo: `frontend/` (React + Vite + TypeScript + React Router + Clerk) and `ba
 
 - Frontend (from `frontend/`): `npm install`, `npm run dev`, `npm run build` (typechecks too)
 - Backend (from `backend/`, venv active): `uvicorn app.main:app --reload`
+- Tests (from `backend/`, venv active): `pip install -r requirements-dev.txt`, then `pytest`
 - Migrations (from `backend/`): `alembic upgrade head`, `alembic revision --autogenerate -m "msg"`
 
 ## Lessons learned
@@ -33,7 +34,8 @@ Add an entry whenever we hit something non-obvious. Keep each to a line or two: 
 - Neon suspends idle compute and drops connections, so the engine uses `pool_pre_ping=True`.
 - `get_current_user_id` in `app/api/deps.py` is deliberately a sync `def`. Fetching the JWKS is blocking, so FastAPI runs it in a threadpool.
 - Clerk session tokens have no `aud` claim by default, so audience verification is off and the issuer is checked instead.
-- `fastapi.testclient` needs `httpx2` for tests. It's not in `requirements.txt` because there's no test suite yet.
+- Tests live in `backend/tests/`. `conftest.py` sets fake env vars before importing the app and swaps Clerk's JWKS for a locally generated RSA key, so tests never touch Clerk or Neon. Dev-only packages (pytest, httpx2) are in `requirements-dev.txt`, not `requirements.txt`.
+- The token's `azp` claim (the origin the browser session belongs to) must be one of `CORS_ORIGINS`, or `/me` returns 401. A frontend served from an origin not listed there (a Vercel preview URL, a new domain) is rejected even though the token is otherwise valid.
 - `CLERK_ISSUER` must match the token's `iss` exactly, with no trailing slash. A mismatch shows up as a 401 on `/api/v1/me`.
 - New model modules must be imported in `app/models/__init__.py` or Alembic autogenerate won't see them.
 

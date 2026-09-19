@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useApi } from "../hooks/useApi";
 
 interface MeResponse {
-  user_id: string;
+  clerk_user_id: string;
 }
 
 export function DashboardPage() {
@@ -22,7 +22,7 @@ export function DashboardPage() {
       <p>Placeholder — awards functionality comes later.</p>
       {/* Temporary check that the token round-trips to the backend. */}
       <p className="muted">
-        {error ? `API error: ${error}` : me ? `Backend sees you as ${me.user_id}` : "Checking API…"}
+        {error ? `API error: ${error}` : me ? `Backend sees you as ${me.clerk_user_id}` : "Checking API…"}
       </p>
     </>
   );

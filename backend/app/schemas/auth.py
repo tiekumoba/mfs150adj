@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class MeResponse(BaseModel):
-    user_id: str
+    clerk_user_id: str
