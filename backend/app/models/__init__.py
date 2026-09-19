@@ -14,7 +14,7 @@ from app.models.evaluations import (
     EvaluationEligibilityCheck,
     EvaluationScore,
 )
-from app.models.nominations import Candidacy, Nomination, NominationEvidence, Nominee
+from app.models.nominations import CategoryEntry, Nomination, NominationEvidence, Nominee
 from app.models.results import CategoryResult, CategoryResultEntry
 from app.models.users import AdjudicatorAssignment, AppUser
 
@@ -26,7 +26,7 @@ __all__ = [
     "AuditEvent",
     "AuditEventChange",
     "Award",
-    "Candidacy",
+    "CategoryEntry",
     "Category",
     "CategoryResult",
     "CategoryResultEntry",

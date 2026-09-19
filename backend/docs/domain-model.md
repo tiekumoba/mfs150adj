@@ -10,7 +10,7 @@ Sources: the MOBA@150 Nominee Evaluation Framework (16 workbooks in `backend/doc
 
 - **Terminology:** `judge` is now `adjudicator` everywhere (role, `adjudicator_id`, table `adjudicator_assignments`). The award lifecycle status `judging` is unchanged.
 - **Independence:** each adjudicator evaluates independently and cannot see anyone else's evaluation or scores.
-- **Eligibility:** candidacy status (administrative), an evaluation's eligibility outcome (derived) and a candidate's final outcome (snapshot) are three separate things.
+- **Eligibility:** category entry status (administrative), an evaluation's eligibility outcome (derived) and a candidate's final outcome (snapshot) are three separate things.
 - **Scoring:** achievement scores are whole numbers; no aggregation method is hard-coded. Aggregation, eligibility rule, minimum evaluations and tie-break rules are configuration recorded on the result when it is finalized.
 - **Conflict of interest:** new `adjudicator_conflicts` table.
 - **Evaluation lifecycle:** submitted evaluations are immutable to the adjudicator; an admin can reopen one only with a reason.
@@ -35,7 +35,7 @@ Sources: the MOBA@150 Nominee Evaluation Framework (16 workbooks in `backend/doc
 Consequences:
 
 1. **The named awards are categories.** The overall programme is the "Award" in this model and contains the 16 categories.
-2. **A record is a nomination, not a nominee.** A nominee can be nominated by several people and in several categories. Adjudicators assess a nominee once per category, so nominations are separated from the thing being assessed (a *candidacy*).
+2. **A record is a nomination, not a nominee.** A nominee can be nominated by several people and in several categories. Adjudicators assess a nominee once per category, so nominations are separated from the thing being assessed (a *category entry*).
 3. **Nominators are outside people, not app users.** Their name and phone are stored as text on the nomination.
 
 ### 1.2 Evaluation framework (the 16 workbooks)
@@ -76,7 +76,7 @@ Notes:
 
 - The workbooks give the official names; the model stores both a `name` and a `short_name` (for example "Edzikanfo").
 - Several categories accept groups, associations or institutions, so a nominee is a **person or an organisation**.
-- Some eligibility statements are themselves conflict-of-interest rules ("no nominee may be a member of the selection committee"). They stay as ordinary pass/fail criteria. The conflict mechanism in 4.5 is separate: it lets an adjudicator declare a personal conflict on a specific candidacy.
+- Some eligibility statements are themselves conflict-of-interest rules ("no nominee may be a member of the selection committee"). They stay as ordinary pass/fail criteria. The conflict mechanism in 4.5 is separate: it lets an adjudicator declare a personal conflict on a specific category entry.
 
 ## 3. Conventions
 
@@ -182,23 +182,23 @@ The scoring guide (0 No evidence … 5 Exceptional, with thresholds) is the same
 | `name` | text, not null | Index on `lower(name)` to help spot duplicates |
 | `created_at`, `updated_at` | timestamptz | |
 
-**`candidacies`**: a nominee competing in one category. **This is the thing adjudicators assess.** A nominee can have several candidacies, one per category.
+**`category_entries`**: a nominee competing in one category. **This is the thing adjudicators assess.** A nominee can have several category entries, one per category.
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | |
 | `category_id` | uuid FK → categories | |
 | `nominee_id` | uuid FK → nominees | unique together with `category_id` |
-| `status` | text, not null | **Administrative only:** `pending`, `accepted`, `rejected`, `withdrawn`. Only `accepted` candidacies are assessed. It says nothing about eligibility (see 4.4) |
+| `status` | text, not null | **Administrative only:** `pending`, `accepted`, `rejected`, `withdrawn`. Only `accepted` category entries are assessed. It says nothing about eligibility (see 4.4) |
 | `status_reason` | text | Required when `rejected` or `withdrawn` (service layer) |
 | `created_at`, `updated_at` | timestamptz | |
 
-**`nominations`**: one submission by one nominator for a candidacy. One record of the sample data.
+**`nominations`**: one submission by one nominator for a category entry. One record of the sample data.
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | Keeps the source UUID on import |
-| `candidacy_id` | uuid FK → candidacies | |
+| `category_entry_id` | uuid FK → category_entries | |
 | `nominator_name` | text, not null | Hidden from adjudicators while `awards.reveal_nominator_details` is false |
 | `nominator_phone` | text, null | Same |
 | `justification` | text, not null | |
@@ -249,7 +249,7 @@ Evidence stays as external URLs and **no file storage system is introduced**. Th
 
 **Access rules** (enforced in the service layer on every request, never only in the UI):
 
-- An adjudicator can access **only accepted candidacies in categories where they have an `active` assignment**. Lists and lookups are filtered by assignment.
+- An adjudicator can access **only accepted category entries in categories where they have an `active` assignment**. Lists and lookups are filtered by assignment.
 - An adjudicator can read and write **only their own evaluations** and can declare conflicts for their own assignments. Details in 4.4 and 4.5.
 - A revoked assignment blocks all further access and edits. Its **submitted evaluations are kept and still counted** (they were valid when made); its drafts are excluded from aggregation.
 - Anyone signed in through Clerk who has no `app_users` row gets 403.
@@ -257,21 +257,21 @@ Evidence stays as external URLs and **no file storage system is introduced**. Th
 
 ### 4.4 Evaluation data
 
-One **evaluation** is one adjudicator's independent assessment of one candidacy. It has three parts: eligibility checks, achievement scores and a conclusion.
+One **evaluation** is one adjudicator's independent assessment of one category entry. It has three parts: eligibility checks, achievement scores and a conclusion.
 
 **`evaluations`**
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | |
-| `assignment_id` | uuid FK → adjudicator_assignments | unique together with `candidacy_id` |
-| `candidacy_id` | uuid FK → candidacies | |
+| `assignment_id` | uuid FK → adjudicator_assignments | unique together with `category_entry_id` |
+| `category_entry_id` | uuid FK → category_entries | |
 | `status` | text, not null | `draft`, `submitted`, `reopened`. No row yet means "not started" |
 | `conclusion` | text | Written conclusion (the framework's "reviewer conclusion") |
 | `submitted_at` | timestamptz, null | `CHECK (status <> 'submitted' OR submitted_at IS NOT NULL)` |
 | `created_at`, `updated_at` | timestamptz | |
 
-The unique constraint means **each adjudicator has at most one evaluation per assigned candidacy**.
+The unique constraint means **each adjudicator has at most one evaluation per assigned category entry**.
 
 **`evaluation_eligibility_checks`**: one row per eligibility criterion.
 
@@ -298,7 +298,7 @@ The unique constraint means **each adjudicator has at most one evaluation per as
 
 Rules that span tables are enforced in the service layer and covered by tests (a trigger can be added later):
 
-- The assignment's category, the candidacy's category and each criterion's category must all be the same.
+- The assignment's category, the category entry's category and each criterion's category must all be the same.
 - `score` must not exceed the criterion's `max_score`.
 - Submitting requires every eligibility check to be assessed and, if the evaluation's eligibility outcome is `pass`, every score to be entered.
 - Submitting is refused while a conflict is declared (4.5).
@@ -315,7 +315,7 @@ Rules that span tables are enforced in the service layer and covered by tests (a
 
 | Concept | Where | Values | Stored? |
 | --- | --- | --- | --- |
-| Candidacy status | `candidacies.status` | `pending`, `accepted`, `rejected`, `withdrawn` | Yes. Administrative decision |
+| Category entry status | `category_entries.status` | `pending`, `accepted`, `rejected`, `withdrawn` | Yes. Administrative decision |
 | Evaluation eligibility outcome | Derived from one adjudicator's checks | `incomplete`, `pass`, `fail` | **No, derived** |
 | Final category outcome | `category_result_entries.outcome` | `ranked`, `ineligible`, `insufficient_evaluations` | Yes, in the snapshot at finalization |
 
@@ -323,13 +323,13 @@ A candidate's final outcome is never copied from one adjudicator's result. It is
 
 ### 4.5 Conflicts of interest
 
-**`adjudicator_conflicts`**: an adjudicator declares that they cannot fairly assess a candidacy.
+**`adjudicator_conflicts`**: an adjudicator declares that they cannot fairly assess a category entry.
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | |
-| `assignment_id` | uuid FK → adjudicator_assignments | unique together with `candidacy_id` |
-| `candidacy_id` | uuid FK → candidacies | Must be in the assignment's category |
+| `assignment_id` | uuid FK → adjudicator_assignments | unique together with `category_entry_id` |
+| `category_entry_id` | uuid FK → category_entries | Must be in the assignment's category |
 | `status` | text, not null | `declared`, `cleared` |
 | `reason` | text, not null | The adjudicator's reason |
 | `declared_at` | timestamptz, not null | |
@@ -342,8 +342,8 @@ A candidate's final outcome is never copied from one adjudicator's result. It is
 
 Rules (service layer, with tests):
 
-- An adjudicator declares a conflict on a candidacy in a category they are assigned to. **Only an admin can clear it, and must give a reason.**
-- While a conflict is `declared`, that adjudicator **cannot create or submit an evaluation** for the candidacy. An existing draft is locked.
+- An adjudicator declares a conflict on a category entry in a category they are assigned to. **Only an admin can clear it, and must give a reason.**
+- While a conflict is `declared`, that adjudicator **cannot create or submit an evaluation** for the category entry. An existing draft is locked.
 - An evaluation that was already submitted when the conflict was declared is **excluded from aggregation** for as long as the conflict stands.
 - Declaring and clearing are audited (`conflict.declared`, `conflict.cleared`).
 
@@ -365,11 +365,11 @@ Until a category is finalized, its standings are computed live from evaluations 
 
 **Finalization workflow** (one admin action per category, in a single database transaction):
 
-1. **Preconditions.** The award is `judging`. The category's `aggregation_method`, `eligibility_rule` and `minimum_evaluations` are set. Every accepted candidacy has at least `minimum_evaluations` submitted, non-conflicted evaluations, or is recorded as `insufficient_evaluations`.
-2. **Evaluations are completed.** Every assigned adjudicator has submitted or declared a conflict for each accepted candidacy.
+1. **Preconditions.** The award is `judging`. The category's `aggregation_method`, `eligibility_rule` and `minimum_evaluations` are set. Every accepted category entry has at least `minimum_evaluations` submitted, non-conflicted evaluations, or is recorded as `insufficient_evaluations`.
+2. **Evaluations are completed.** Every assigned adjudicator has submitted or declared a conflict for each accepted category entry.
 3. **Eligibility outcomes are determined.** Each counted evaluation's eligibility outcome is derived from its checks. The configured `eligibility_rule` combines them into the candidate's final eligibility.
 4. **Configured aggregation is applied.** The configured `aggregation_method` combines the totals of counted evaluations for eligible candidates, and the category's `tie_break_rules` are applied in order.
-5. **The snapshot is generated.** One `category_results` row and one `category_result_entries` row for every accepted candidacy are written, together with the audit event.
+5. **The snapshot is generated.** One `category_results` row and one `category_result_entries` row for every accepted category entry are written, together with the audit event.
 6. **Provenance is recorded.** The result stores who finalized it, when, and which aggregation method, eligibility rule and minimum evaluations were used.
 7. **It is immutable afterwards.** Snapshot rows are never updated. While a current result exists, the following are blocked: reopening evaluations, changing criteria or category configuration, changing tie-break rules, and revoking assignments. Later changes therefore cannot silently alter a finalized result.
 8. **Changing a finalized result** requires an admin to **supersede** it, with a reason. That is audited and marks the result superseded, after which the category can be edited and finalized again. The old snapshot is kept.
@@ -390,13 +390,13 @@ Until a category is finalized, its standings are computed live from evaluations 
 | `supersede_reason` | text, null | `CHECK (superseded_at IS NULL OR (supersede_reason IS NOT NULL AND superseded_by_clerk_user_id IS NOT NULL))` |
 | `created_at` | timestamptz | |
 
-**`category_result_entries`**: one row per accepted candidacy in the category.
+**`category_result_entries`**: one row per accepted category entry in the category.
 
 | Column | Type | Notes |
 | --- | --- | --- |
 | `id` | uuid PK | |
 | `result_id` | uuid FK → category_results, `ON DELETE CASCADE` | |
-| `candidacy_id` | uuid FK → candidacies | unique together with `result_id` |
+| `category_entry_id` | uuid FK → category_entries | unique together with `result_id` |
 | `outcome` | text, not null | `ranked`, `ineligible`, `insufficient_evaluations`. The **final** outcome, not an adjudicator's |
 | `rank` | integer, null | Ties share a rank unless a tie-break rule separates them |
 | `total_score` | numeric(6,3), null | Out of 100 |
@@ -437,7 +437,7 @@ The totals are stored on purpose so a finalized result cannot change. Every eval
 | --- | --- | --- | --- |
 | Awards and categories | `award.updated`, `award.status_changed`, `award.setting_changed` (nominator switch), `category.updated` | Yes | No |
 | Criteria and configuration | `criteria.created`, `criteria.updated`, `criteria.deleted` (eligibility and achievement), `category.config_updated` (aggregation method, eligibility rule, minimum evaluations), `tie_break_rule.changed` | Yes | No |
-| Nominees and nominations | `nominee.added`, `candidacy.status_changed`, `nomination.edited` | Yes | For rejected or withdrawn (service layer) |
+| Nominees and nominations | `nominee.added`, `category_entry.status_changed`, `nomination.edited` | Yes | For rejected or withdrawn (service layer) |
 | Adjudicators | `adjudicator.invited`, `adjudicator.deactivated`, `adjudicator.assigned`, `adjudicator.assignment_revoked` | Yes | No |
 | Conflicts | `conflict.declared`, `conflict.cleared` | Yes | **Yes for `cleared` (database)** |
 | Evaluations | `evaluation.submitted`, `evaluation.reopened`, `evaluation.updated_after_reopen` | Yes for updates after reopening | **Yes for `reopened` (database)** |
@@ -472,22 +472,22 @@ award
 │   ├── eligibility_criteria
 │   ├── achievement_criteria
 │   ├── tie_break_rules ──── achievement_criterion (optional)
-│   ├── candidacies ──── nominee (belongs to the award; can have many candidacies)
+│   ├── category_entries ──── nominee (belongs to the award; can have many category entries)
 │   │   └── nominations
 │   │       └── nomination_evidence
 │   ├── adjudicator_assignments ──── app_users (adjudicator)
-│   │   ├── evaluations ──── candidacy
+│   │   ├── evaluations ──── category_entry
 │   │   │   ├── evaluation_eligibility_checks ──── eligibility_criterion
 │   │   │   └── evaluation_scores ──── achievement_criterion
-│   │   └── adjudicator_conflicts ──── candidacy
+│   │   └── adjudicator_conflicts ──── category_entry
 │   └── category_results
-│       └── category_result_entries ──── candidacy
+│       └── category_result_entries ──── category_entry
 └── nominees
 
 audit_events → audit_event_changes   (refer to any entity by type + id, no FK)
 ```
 
-Deleting is avoided: a candidacy is `withdrawn`, an assignment is `revoked`, a user is `deactivated`, a result is `superseded`.
+Deleting is avoided: a category entry is `withdrawn`, an assignment is `revoked`, a user is `deactivated`, a result is `superseded`.
 
 ## 6. ER diagram
 
@@ -499,23 +499,23 @@ erDiagram
     CATEGORIES ||--o{ ACHIEVEMENT_CRITERIA : "is scored by"
     CATEGORIES ||--o{ TIE_BREAK_RULES : "breaks ties by"
     ACHIEVEMENT_CRITERIA |o--o{ TIE_BREAK_RULES : "may be referenced by"
-    CATEGORIES ||--o{ CANDIDACIES : "is competed in"
-    NOMINEES ||--o{ CANDIDACIES : "competes as"
-    CANDIDACIES ||--o{ NOMINATIONS : "supported by"
+    CATEGORIES ||--o{ CATEGORY_ENTRIES : "is competed in"
+    NOMINEES ||--o{ CATEGORY_ENTRIES : "competes as"
+    CATEGORY_ENTRIES ||--o{ NOMINATIONS : "supported by"
     NOMINATIONS ||--o{ NOMINATION_EVIDENCE : "has files"
     CATEGORIES ||--o{ ADJUDICATOR_ASSIGNMENTS : "adjudicated via"
     APP_USERS ||--o{ ADJUDICATOR_ASSIGNMENTS : "is assigned"
     ADJUDICATOR_ASSIGNMENTS ||--o{ EVALUATIONS : makes
-    CANDIDACIES ||--o{ EVALUATIONS : "is evaluated in"
+    CATEGORY_ENTRIES ||--o{ EVALUATIONS : "is evaluated in"
     ADJUDICATOR_ASSIGNMENTS ||--o{ ADJUDICATOR_CONFLICTS : declares
-    CANDIDACIES ||--o{ ADJUDICATOR_CONFLICTS : "is subject of"
+    CATEGORY_ENTRIES ||--o{ ADJUDICATOR_CONFLICTS : "is subject of"
     EVALUATIONS ||--o{ EVALUATION_ELIGIBILITY_CHECKS : contains
     ELIGIBILITY_CRITERIA ||--o{ EVALUATION_ELIGIBILITY_CHECKS : "is checked in"
     EVALUATIONS ||--o{ EVALUATION_SCORES : contains
     ACHIEVEMENT_CRITERIA ||--o{ EVALUATION_SCORES : "is scored in"
     CATEGORIES ||--o{ CATEGORY_RESULTS : "is finalized as"
     CATEGORY_RESULTS ||--o{ CATEGORY_RESULT_ENTRIES : ranks
-    CANDIDACIES ||--o{ CATEGORY_RESULT_ENTRIES : "appears in"
+    CATEGORY_ENTRIES ||--o{ CATEGORY_RESULT_ENTRIES : "appears in"
     AUDIT_EVENTS ||--o{ AUDIT_EVENT_CHANGES : records
 
     AWARDS {
@@ -562,7 +562,7 @@ erDiagram
         uuid award_id FK
         text name
     }
-    CANDIDACIES {
+    CATEGORY_ENTRIES {
         uuid id PK
         uuid category_id FK
         uuid nominee_id FK
@@ -570,7 +570,7 @@ erDiagram
     }
     NOMINATIONS {
         uuid id PK
-        uuid candidacy_id FK
+        uuid category_entry_id FK
         text nominator_name
         text nominator_phone
         text justification
@@ -600,7 +600,7 @@ erDiagram
     ADJUDICATOR_CONFLICTS {
         uuid id PK
         uuid assignment_id FK
-        uuid candidacy_id FK
+        uuid category_entry_id FK
         text status
         text reason
         timestamptz declared_at
@@ -608,7 +608,7 @@ erDiagram
     EVALUATIONS {
         uuid id PK
         uuid assignment_id FK
-        uuid candidacy_id FK
+        uuid category_entry_id FK
         text status
         text conclusion
         timestamptz submitted_at
@@ -639,7 +639,7 @@ erDiagram
     CATEGORY_RESULT_ENTRIES {
         uuid id PK
         uuid result_id FK
-        uuid candidacy_id FK
+        uuid category_entry_id FK
         text outcome
         int rank
         numeric total_score
@@ -668,7 +668,7 @@ erDiagram
 | Table.column | Values | Notes |
 | --- | --- | --- |
 | `awards.status` | `draft` → `nominations` → `judging` → `finalized` → `archived` | `judging` is when adjudication begins; criteria, weights and scale freeze then |
-| `candidacies.status` | `pending`, `accepted`, `rejected`, `withdrawn` | Administrative. Only `accepted` is assessed |
+| `category_entries.status` | `pending`, `accepted`, `rejected`, `withdrawn` | Administrative. Only `accepted` is assessed |
 | `app_users.status` | `invited` → `active` → `deactivated` | |
 | `adjudicator_assignments.status` | `active`, `revoked` | Revoked rows are kept |
 | `adjudicator_conflicts.status` | `declared` → `cleared` | Only an admin can clear |
@@ -687,7 +687,7 @@ erDiagram
 | Eligibility and achievement criteria, weights, `max_score` | Editable by admins until the award is `judging`, then frozen | Yes | Changing the yardstick under existing scores makes them incomparable |
 | Aggregation method, eligibility rule, minimum evaluations, tie-break rules | Editable until the category is finalized; frozen while a current result exists | Yes | Must match what the result records |
 | Nominator visibility switch | Admin only | Yes | Changes what adjudicators can see |
-| Nominee and candidacy add/remove | Withdraw or reject rather than delete | Yes, with reason | Explains why someone was or wasn't assessed |
+| Nominee and category entry add/remove | Withdraw or reject rather than delete | Yes, with reason | Explains why someone was or wasn't assessed |
 | Nomination text and evidence | Stored as received; edits by admins only | Yes | The record adjudicators relied on must be traceable |
 | Adjudicator invitation, assignment, revocation | Status change, never delete | Yes | Shows who was allowed to assess what, and when |
 | Conflict declaration | Adjudicator declares; only an admin clears | Yes; reason required to clear | Protects fairness |
@@ -703,8 +703,8 @@ erDiagram
 | Sample field | Goes to |
 | --- | --- |
 | `id` | `nominations.id` |
-| `award_category` | Mapped through an explicit lookup to one of the 16 `categories`; creates or finds the `candidacies` row |
-| `nominee_name` | `nominees.name`, matched or created; links to the candidacy |
+| `award_category` | Mapped through an explicit lookup to one of the 16 `categories`; creates or finds the `category_entries` row |
+| `nominee_name` | `nominees.name`, matched or created; links to the category entry |
 | `nominator_name`, `nominator_phone` | `nominations.nominator_name`, `nominator_phone` |
 | `justification` | `nominations.justification` |
 | `supporting_evidence[]` | One `nomination_evidence` row each |
@@ -724,7 +724,7 @@ The sample category strings differ slightly from the official names (for example
 | Per-nominee score, basis for scoring | `evaluation_scores` |
 | Reviewer conclusion | `evaluations.conclusion` |
 | Review status | `evaluations.status` |
-| Nominated for this award? | `candidacies.status` |
+| Nominated for this award? | `category_entries.status` |
 
 The nominee sheets in the workbooks hold only placeholders ("John Doe"), so no nominee data comes from them.
 
@@ -733,7 +733,7 @@ The nominee sheets in the workbooks hold only placeholders ("John Doe"), so no n
 ## 10. Assumptions
 
 - The programme has one `awards` row and the 16 categories sit under it.
-- A candidacy is assessed once per category however many people nominated the nominee. The same nominee can have a candidacy in several categories.
+- A category entry is assessed once per category however many people nominated the nominee. The same nominee can have a category entry in several categories.
 - Scores use the framework's scale (whole numbers, 0–5), stored per criterion as data.
 - One role per person: `admin` or `adjudicator`.
 - Nominators do not sign in.

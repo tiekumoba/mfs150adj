@@ -10,7 +10,7 @@ import app.models  # noqa: F401  (registers models on Base.metadata)
 
 TABLES = {
     "awards", "categories", "eligibility_criteria", "achievement_criteria", "tie_break_rules",
-    "nominees", "candidacies", "nominations", "nomination_evidence",
+    "nominees", "category_entries", "nominations", "nomination_evidence",
     "app_users", "adjudicator_assignments",
     "evaluations", "evaluation_eligibility_checks", "evaluation_scores", "adjudicator_conflicts",
     "category_results", "category_result_entries",
