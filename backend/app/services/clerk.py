@@ -18,12 +18,18 @@ def verify_clerk_token(token: str) -> dict[str, Any]:
 
     Raises jwt.PyJWTError if the signature, issuer or expiry is invalid.
     """
+    settings = get_settings()
     signing_key = _jwks_client().get_signing_key_from_jwt(token)
-    return jwt.decode(
+    claims: dict[str, Any] = jwt.decode(
         token,
         signing_key.key,
         algorithms=["RS256"],
-        issuer=get_settings().clerk_issuer,
+        issuer=settings.clerk_issuer,
         leeway=10,  # tolerate small clock skew
         options={"require": ["exp", "iss", "sub"], "verify_aud": False},
     )
+    # `azp` is the origin the token was issued to. Only accept our own frontends.
+    azp = claims.get("azp")
+    if azp is not None and azp not in settings.cors_origin_list:
+        raise jwt.InvalidTokenError("Token was issued to an unauthorized party")
+    return claims

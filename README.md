@@ -94,7 +94,17 @@ alembic revision --autogenerate -m "message"    # create one after adding models
 
 Tables are only ever created through Alembic, never at app startup. Import new model modules in `app/models/__init__.py` so autogenerate can see them.
 
-## 9. Running the application
+## 9. Running the tests
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+pytest
+```
+
+Tests use a locally generated signing key, so they need no Clerk or Neon credentials.
+
+## 10. Running the application
 
 1. Start the backend (section 5) and the frontend (section 4).
 2. Check `curl http://localhost:8000/api/v1/health` returns `{"status":"ok"}`.
