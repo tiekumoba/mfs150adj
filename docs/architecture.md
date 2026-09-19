@@ -33,6 +33,22 @@ Clerk proves *who* someone is; our `users` table decides *whether* they get in a
 
 The token's authorized party must be one of `CORS_ORIGINS`, so the deployed frontend origin must be listed there.
 
+## API routes
+
+All under `/api`, all require a signed-in invited user (see Authentication).
+
+| Route | Access | Notes |
+| --- | --- | --- |
+| `GET /api/me` | any | current user and role |
+| `GET /api/categories` | any | with nomination counts; `?active=true|false` |
+| `GET /api/admin/stats` | ADMIN | dashboard counts |
+| `GET /api/nominations` | ADMIN | `?categoryId=&q=&page=&pageSize=` (max 100) |
+| `GET /api/nominations/:id` | ADMIN | includes supporting-evidence links |
+
+Public: `GET /health`, `GET /health/db`.
+
+Nomination data was imported from the old dataset with `npm run db:import -- backend/data/awards.json` (data file is gitignored; it contains personal information).
+
 ## Deployment
 
 **Vercel** (frontend): the app depends on `shared`, so it builds from the repo root. `vercel.json` holds the settings:

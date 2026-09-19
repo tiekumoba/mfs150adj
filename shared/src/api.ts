@@ -10,6 +10,45 @@ export interface CategoryDto {
   name: string;
   description: string | null;
   isActive: boolean;
+  nominationCount: number;
+}
+
+export type EvidenceKind = "image" | "document" | "video" | "external_link";
+
+export interface NominationDocumentDto {
+  id: string;
+  kind: EvidenceKind;
+  url: string;
+  fileName: string | null;
+}
+
+export interface NominationListItem {
+  id: string;
+  nomineeName: string;
+  nominatorName: string | null;
+  categoryId: string;
+  categoryName: string;
+  status: string;
+  documentCount: number;
+}
+
+export interface NominationDetail extends Omit<NominationListItem, "documentCount"> {
+  citation: string | null;
+  documents: NominationDocumentDto[];
+}
+
+export interface Paginated<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface AdminStats {
+  totalNominations: number;
+  totalAdjudicators: number;
+  pendingAssignments: number;
+  completedEvaluations: number;
 }
 
 export interface ApiErrorBody {
