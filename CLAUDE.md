@@ -36,3 +36,18 @@ Add an entry whenever we hit something non-obvious. Keep each to a line or two: 
 - `fastapi.testclient` needs `httpx2` for tests. It's not in `requirements.txt` because there's no test suite yet.
 - `CLERK_ISSUER` must match the token's `iss` exactly, with no trailing slash. A mismatch shows up as a 401 on `/api/v1/me`.
 - New model modules must be imported in `app/models/__init__.py` or Alembic autogenerate won't see them.
+
+### Database
+
+- A Neon **branch** copies its parent's data; a new **project** starts empty. Before running any migration, list the tables in the target database and confirm it's the one you expect. Never run `alembic revision --autogenerate` against a database holding tables we don't own, because it would generate drops for them.
+
+### Deployment
+
+- Hosting: frontend on Vercel (project `mfs150adj-web`, Root Directory `frontend`), backend on Render (`awards-adjudication-api`, Root Directory `backend`, Python). Both auto-deploy from `main`. Old services wired to this repo failed on every push until reconfigured, so check a service's settings when it fails right after a stack change.
+- Vercel: `frontend/vercel.json` rewrites all paths to `index.html`. Without it, loading `/sign-in` or `/dashboard` directly returns 404 because React Router runs in the browser.
+- Vercel: the `*.vercel.app` project URL serves only the Production Branch (`main`). Other branches get separate preview URLs, so a fix on a feature branch won't show at the main URL until it's merged.
+- Vercel: `VITE_` variables are baked into the public bundle at build time. Only put public values there (`VITE_API_URL`, `VITE_CLERK_PUBLISHABLE_KEY`), never secrets, and redeploy after changing them. Ignore Vercel's warning about the prefix for those two.
+- Render: build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, Health Check Path `/api/v1/health`. Required env vars: `DATABASE_URL`, `CLERK_JWKS_URL`, `CLERK_ISSUER`, `CORS_ORIGINS`. Missing ones crash startup with a pydantic "Field required" error.
+- `CORS_ORIGINS` takes origins only (`https://mfs150adj-web.vercel.app`): no path such as `/sign-in`, no trailing slash. Update it if the frontend URL changes.
+- `CLERK_SECRET_KEY` is not used anywhere; don't set it. Render's free tier sleeps when idle, so the first request can take up to a minute.
+- Checking deploys: `gh api repos/tiekumoba/mfs150adj/commits/<sha>/statuses` shows Vercel and Render results per commit. Build logs need the dashboards (no CLI access from here).
