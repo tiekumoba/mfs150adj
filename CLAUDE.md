@@ -23,7 +23,8 @@ Monorepo: `frontend/` (React + Vite + TypeScript + React Router + Clerk) and `ba
 
 - Frontend (from `frontend/`): `npm install`, `npm run dev`, `npm run build` (typechecks too)
 - Backend (from `backend/`, venv active): `uvicorn app.main:app --reload`
-- Tests (from `backend/`, venv active): `pip install -r requirements-dev.txt`, then `pytest`
+- Tests (from `backend/`, venv active): `pip install -r requirements-dev.txt`, then `pytest`. Database tests need `TEST_DATABASE_URL=postgresql://.../<name>_test` and are skipped without it
+- First admin (from `backend/`): `python -m app.db.create_admin --email ... --name ... [--clerk-user-id user_...]`
 - Migrations (from `backend/`): `alembic upgrade head`, `alembic revision --autogenerate -m "msg"`
 - Seed (from `backend/`, after migrating): `python -m app.db.seed` (creates the award and 16 categories from `seed/categories.json`; safe to re-run)
 
@@ -33,11 +34,14 @@ Add an entry whenever we hit something non-obvious. Keep each to a line or two: 
 
 - Neon's `postgresql://...?sslmode=require&channel_binding=...` URL breaks asyncpg. `Settings.sqlalchemy_database_url` in `app/core/config.py` converts it, so paste the URL from Neon unchanged.
 - Neon suspends idle compute and drops connections, so the engine uses `pool_pre_ping=True`.
-- `get_current_user_id` in `app/api/deps.py` is deliberately a sync `def`. Fetching the JWKS is blocking, so FastAPI runs it in a threadpool.
+- `get_verified_claims` in `app/api/deps.py` is deliberately a sync `def`. Fetching the JWKS is blocking, so FastAPI runs it in a threadpool.
 - Clerk session tokens have no `aud` claim by default, so audience verification is off and the issuer is checked instead.
 - Tests live in `backend/tests/`. `conftest.py` sets fake env vars before importing the app and swaps Clerk's JWKS for a locally generated RSA key, so tests never touch Clerk or Neon. Dev-only packages (pytest, httpx2) are in `requirements-dev.txt`, not `requirements.txt`.
 - The token's `azp` claim (the origin the browser session belongs to) must be one of `CORS_ORIGINS`, or `/me` returns 401. A frontend served from an origin not listed there (a Vercel preview URL, a new domain) is rejected even though the token is otherwise valid.
 - `CLERK_ISSUER` must match the token's `iss` exactly, with no trailing slash. A mismatch shows up as a 401 on `/api/v1/me`.
+- Access control: a valid Clerk token is not enough. `get_current_user` (`app/api/deps.py`) needs an `active` `app_users` row, and `require_role` gates routes. Use `CurrentUser`, `RequireAdmin` or `RequireAdjudicator` on every new route, never `get_verified_claims` alone. Admins are deliberately denied adjudicator routes.
+- Invited users are linked on first sign-in by matching the token's `email` claim, which Clerk only includes if the session token is customised (`{"email": "{{user.primary_email_address}}"}`, see README). Without it an `invited` user gets 403; a first admin created with `--clerk-user-id` doesn't need it.
+- Tests that need a database use `TEST_DATABASE_URL` (a throwaway `*_test` database, never Neon). `conftest.py` refuses other names, creates tables with `create_all` and truncates between tests. Use `NullPool` there: `TestClient` runs each request on a new event loop, and pooled asyncpg connections can't cross loops.
 - New model modules must be imported in `app/models/__init__.py` or Alembic autogenerate won't see them.
 
 ### Database

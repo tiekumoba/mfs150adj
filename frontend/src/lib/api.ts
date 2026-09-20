@@ -15,7 +15,8 @@ function messageFor(status: number, detail?: string): string {
     case 401:
       return "Your session is invalid or has expired. Please sign in again.";
     case 403:
-      return "You don't have permission to do that.";
+      // The server says why (no account, deactivated, wrong role), and it's the user's own status.
+      return detail ?? "You don't have permission to do that.";
     case 404:
       return "The requested resource was not found.";
     case 500:
