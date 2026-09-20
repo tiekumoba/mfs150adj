@@ -2,28 +2,28 @@
 
 React + Vite frontend, FastAPI backend, Neon PostgreSQL, Clerk authentication.
 
-This is the foundation only: sign-in, a protected dashboard placeholder, a protected `/api/v1/me` endpoint and migration tooling. No awards features yet.
+So far: the database schema, sign-in, role-based access control (admin and adjudicator dashboards) and migration tooling. The award workflow itself is not built yet.
 
 ## 1. Project structure
 
 ```
 frontend/            React + Vite + TypeScript
   src/
-    components/      Shared components (ProtectedRoute)
-    layouts/         AppLayout (header + outlet)
-    pages/           SignIn, Dashboard, NotFound
-    hooks/           useApi (API client bound to the Clerk token)
+    components/      ProtectedRoute, CurrentUserGate, RequireRole, AccessDenied
+    layouts/         AppLayout (header, sidebar, outlet)
+    pages/           SignIn, admin and adjudicator dashboards, AccessDenied, NotFound
+    hooks/           useApi (API client bound to the Clerk token), current user, useApiData
     lib/             api.ts (fetch wrapper + error handling)
     routes/          Route table
 backend/             FastAPI
   app/
     main.py          App, CORS, error handler
-    api/             deps.py (auth dependency) and v1/ routers
+    api/             deps.py (authentication, role and pagination dependencies) and v1/ routers
     core/            Settings from environment variables
     db/              SQLAlchemy base + async session
-    models/          SQLAlchemy models (none yet)
+    models/          SQLAlchemy models
     schemas/         Pydantic schemas
-    services/        Business logic (Clerk JWT verification)
+    services/        Business logic (Clerk JWT verification, user lookup and linking)
   alembic/           Migrations
 ```
 
@@ -82,6 +82,33 @@ Interactive API docs: http://localhost:8000/docs
 3. **API keys → Show API URLs** (or Domains) → find your Frontend API URL, e.g. `https://your-app.clerk.accounts.dev`.
    - `CLERK_ISSUER` = that URL, with no trailing slash.
    - `CLERK_JWKS_URL` = that URL + `/.well-known/jwks.json`.
+4. **Sessions → Customize session token** → add the claim below. It lets the backend link an invited person to their account the first time they sign in (Clerk's default token carries no email):
+
+   ```json
+   { "email": "{{user.primary_email_address}}" }
+   ```
+
+5. Restrict sign-ups to invited people, so a Clerk login can only ever belong to someone you have invited. The app also refuses any login that has no active account, but this keeps strangers out of Clerk itself.
+
+### Who can use the app
+
+A Clerk sign-in is not enough. The backend requires an **active** row in `app_users`, and the role decides the routes:
+
+| | Any active user | `admin` | `adjudicator` |
+| --- | --- | --- | --- |
+| `GET /api/v1/me` | yes | yes | yes |
+| `GET /api/v1/users` | | yes | no (403) |
+| `GET /api/v1/me/assignments` | | no (403) | yes |
+
+No row, an `invited` row that could not be linked, or a `deactivated` user all get 403. An `invited` user is linked (Clerk ID stored, status set to `active`) the first time they sign in with a token whose `email` claim matches.
+
+**Create the first administrator** once, from `backend/` with the venv active (the Clerk user ID is in the Clerk dashboard under Users):
+
+```bash
+python -m app.db.create_admin --email you@example.org --name "Your Name" --clerk-user-id user_2abc...
+```
+
+Without `--clerk-user-id` the admin is created as `invited` and linked by email on first sign-in (needs step 4). Re-running is safe.
 
 ## 8. Running migrations
 
@@ -104,8 +131,17 @@ pytest
 
 Tests use a locally generated signing key, so they need no Clerk or Neon credentials.
 
+The access-control tests also need a real PostgreSQL, because the rules live in SQL. Create an empty local database whose name ends in `_test` and point `TEST_DATABASE_URL` at it; without it those tests are skipped:
+
+```bash
+createdb awards_test
+TEST_DATABASE_URL=postgresql://localhost/awards_test pytest
+```
+
+The tests create tables in that database and delete its rows between tests. They refuse any database not named `*_test`. Never point this at Neon.
+
 ## 10. Running the application
 
 1. Start the backend (section 5) and the frontend (section 4).
 2. Check `curl http://localhost:8000/api/v1/health` returns `{"status":"ok"}`.
-3. Open http://localhost:5173, sign in, and the dashboard shows the Clerk user ID returned by `GET /api/v1/me`.
+3. Open http://localhost:5173 and sign in. An admin lands on the admin dashboard, an adjudicator on the adjudicator dashboard, and anyone without an active account sees an access-denied page.
